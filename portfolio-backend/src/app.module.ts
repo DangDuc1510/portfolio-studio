@@ -14,7 +14,7 @@ import { HomepageSectionsModule } from './homepage-sections/homepage-sections.mo
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    MongooseModule.forRoot(process.env.MONGODB_URI || 'mongodb+srv://ducbd1510_db_user:123456abc@db-portfolio-studio.4hxu4ed.mongodb.net/db-portfolio-studio/'),
+    MongooseModule.forRoot(process.env.MONGODB_URI || 'mongodb+srv://ducbd1510_db_user:123456abc@db-portfolio-studio.4hxu4ed.mongodb.net/', { dbName: 'db-portfolio-studio' }),
     AuthModule,
     ProductsModule,
     AlbumsModule,
