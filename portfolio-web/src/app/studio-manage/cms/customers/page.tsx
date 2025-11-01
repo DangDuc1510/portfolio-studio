@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import { getCustomers, deleteCustomerById } from '@/lib/api';
 
 interface Customer {
@@ -13,8 +12,6 @@ interface Customer {
 }
 
 const CustomerManagement = () => {
-  const params = useParams();
-  const cmsKey = params.key as string; // `cmsKey` vẫn được giữ lại để tương thích với `useParams()` nhưng không được sử dụng trong API calls
   const [customers, setCustomers] = useState<Customer[]>([]);
 
   useEffect(() => {

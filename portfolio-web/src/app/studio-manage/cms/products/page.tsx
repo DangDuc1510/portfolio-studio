@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import { getProducts, getProductById, createProduct, updateProductById, deleteProductById } from '@/lib/api';
 
 interface Product {
@@ -13,15 +12,13 @@ interface Product {
 }
 
 const ProductManagement = () => {
-  const params = useParams();
-  const cmsKey = params.key as string;
   const [products, setProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [form, setForm] = useState<Omit<Product, 'id'>>({ name: '', description: '', images: [], category: '', albumId: '' });
 
   useEffect(() => {
     fetchProducts();
-  }, [cmsKey]);
+  }, []);
 
   const fetchProducts = async () => {
     const data = await getProducts(); // Public API, no key needed

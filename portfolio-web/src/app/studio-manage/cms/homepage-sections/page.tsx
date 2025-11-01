@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import { getHomepageSections, updateHomepageSection } from '@/lib/api';
 
 interface HomepageSection {
@@ -11,8 +10,6 @@ interface HomepageSection {
 }
 
 const HomepageSectionManagement = () => {
-  const params = useParams();
-  const cmsKey = params.key as string; // `cmsKey` vẫn được giữ lại để tương thích với `useParams()` nhưng không được sử dụng trong API calls
   const [sections, setSections] = useState<HomepageSection[]>([]);
   const [editingSection, setEditingSection] = useState<HomepageSection | null>(null);
   const [form, setForm] = useState<Omit<HomepageSection, 'id' | 'sectionName'>>({ isVisible: true, content: {} });

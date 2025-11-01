@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import { getAlbums, getAlbumById, createAlbum, updateAlbum, deleteAlbum } from '@/lib/api';
 
 interface Album {
@@ -12,15 +11,13 @@ interface Album {
 }
 
 const AlbumManagement = () => {
-  const params = useParams();
-  const cmsKey = params.key as string;
   const [albums, setAlbums] = useState<Album[]>([]);
   const [editingAlbum, setEditingAlbum] = useState<Album | null>(null);
   const [form, setForm] = useState<Omit<Album, 'id'>>({ name: '', description: '', coverImage: '', productIds: [] });
 
   useEffect(() => {
     fetchAlbums();
-  }, [cmsKey]);
+  }, []);
 
   const fetchAlbums = async () => {
     const data = await getAlbums(); // Public API, no key needed
