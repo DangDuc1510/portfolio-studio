@@ -1,44 +1,56 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { getProducts, getCategories } from "@/lib/api";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ProductsListing from "@/components/products/ProductsListing";
 
 function ProductsContent() {
-  const router = useRouter();
   const pathname = usePathname();
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState<string | undefined>(undefined);
   const [search, setSearch] = useState<string | undefined>(undefined);
+  const previousUrlRef = useRef<string>("");
 
-  // Get search params from window.location.search
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      setPage(parseInt(params.get("page") || "1", 10));
-      setCategory(params.get("category") || undefined);
-      setSearch(params.get("search") || undefined);
-    }
-  }, [pathname]);
+    // Get search params from window.location.search
+    const updateParams = () => {
+      if (typeof window !== "undefined") {
+        const currentUrl = window.location.href;
+        // Only update if URL actually changed
+        if (currentUrl !== previousUrlRef.current) {
+          previousUrlRef.current = currentUrl;
+          const params = new URLSearchParams(window.location.search);
+          setPage(parseInt(params.get("page") || "1", 10));
+          setCategory(params.get("category") || undefined);
+          setSearch(params.get("search") || undefined);
+        }
+      }
+    };
 
-  // Listen for browser back/forward navigation
-  useEffect(() => {
-    if (typeof window === "undefined") return;
+    // Initial load
+    updateParams();
 
+    // Listen for browser back/forward navigation
     const handlePopState = () => {
-      const params = new URLSearchParams(window.location.search);
-      setPage(parseInt(params.get("page") || "1", 10));
-      setCategory(params.get("category") || undefined);
-      setSearch(params.get("search") || undefined);
+      updateParams();
     };
 
     window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
+
+    // Poll for URL changes (for Next.js router navigation)
+    const interval = setInterval(() => {
+      updateParams();
+    }, 100);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      clearInterval(interval);
+    };
+  }, [pathname]);
 
   const filters = {
     page,
