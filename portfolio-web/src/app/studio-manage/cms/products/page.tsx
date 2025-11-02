@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { Select, Input, Pagination } from "antd";
 import { useProducts, useDeleteProduct, Product } from "./hooks/useProducts";
@@ -19,6 +19,7 @@ import {
 export default function ProductsListPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<
     string | undefined
   >();
@@ -26,6 +27,15 @@ export default function ProductsListPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(12);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   // Build filters object
   const filters = useMemo(() => {
@@ -44,13 +54,13 @@ export default function ProductsListPage() {
       sortOrder: sortOrder,
     };
 
-    if (searchQuery) filterObj.search = searchQuery;
+    if (debouncedSearchQuery) filterObj.search = debouncedSearchQuery;
     if (selectedCategory) filterObj.category = selectedCategory;
     if (selectedAlbum) filterObj.albumId = selectedAlbum;
 
     return filterObj;
   }, [
-    searchQuery,
+    debouncedSearchQuery,
     selectedCategory,
     selectedAlbum,
     currentPage,
@@ -71,6 +81,11 @@ export default function ProductsListPage() {
   const handleFilterChange = () => {
     setCurrentPage(1);
   };
+
+  // Reset to page 1 when debounced search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearchQuery]);
   const { data: albums = [] } = useAlbums();
   const { data: categories = [] } = useCategories();
   const deleteProduct = useDeleteProduct();
@@ -87,7 +102,7 @@ export default function ProductsListPage() {
     if (product.thumbnail) {
       return product.thumbnail;
     }
-    return "image.jpg";
+    return "/image.png";
   };
 
   const handleDelete = async (id: string, name: string) => {
@@ -165,7 +180,6 @@ export default function ProductsListPage() {
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
-                handleFilterChange();
               }}
               className="w-full ant-select-selector"
               allowClear
@@ -254,11 +268,11 @@ export default function ProductsListPage() {
       {products.length === 0 && pagination.total === 0 ? (
         <div className="bg-gradient-to-br from-[#414141] via-[#303030] to-[#2C2C2C] backdrop-blur-xl rounded-2xl p-12 border border-white/10 text-center">
           <p className="text-gray-400 text-lg mb-6">
-            {searchQuery || selectedCategory || selectedAlbum
+            {debouncedSearchQuery || selectedCategory || selectedAlbum
               ? "No products match your filters"
               : "No products found"}
           </p>
-          {!searchQuery && !selectedCategory && !selectedAlbum && (
+          {!debouncedSearchQuery && !selectedCategory && !selectedAlbum && (
             <Link
               href="/studio-manage/cms/products/create"
               className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-b from-[#4B4B4B] to-[#41411] hover:from-[#5B5B5B] hover:to-[#4B4B4B] text-white rounded-xl transition-all border border-white/10"

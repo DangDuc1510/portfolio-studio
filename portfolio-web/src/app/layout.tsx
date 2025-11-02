@@ -36,6 +36,18 @@ export default function RootLayout({
                     optionActiveBg: "#4B4B4B",
                     selectorBg: "#2C2C2C",
                   },
+                  Switch: {
+                    colorPrimary: "#FFDD00",
+                    colorPrimaryHover: "#FFED4E",
+                    colorTextQuaternary: "#414141",
+                    colorTextTertiary: "#4B4B4B",
+                  },
+                  Input: {
+                    colorBgContainer: "#2C2C2C",
+                    colorBorder: "rgba(255, 255, 255, 0.1)",
+                    colorText: "#ffffff",
+                    colorTextPlaceholder: "#9ca3af",
+                  },
                 },
               }}
             >

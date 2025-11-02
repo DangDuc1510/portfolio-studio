@@ -16,7 +16,15 @@ export class HomepageSectionsService {
     return this.homepageSectionModel.findOne({ sectionName }).exec();
   }
 
+  async findById(id: string): Promise<HomepageSection | null> {
+    return this.homepageSectionModel.findById(id).exec();
+  }
+
   async update(sectionName: string, updateHomepageSectionDto: UpdateHomepageSectionDto): Promise<HomepageSection> {
     return this.homepageSectionModel.findOneAndUpdate({ sectionName }, updateHomepageSectionDto, { new: true, upsert: true }).exec();
+  }
+
+  async updateById(id: string, updateHomepageSectionDto: UpdateHomepageSectionDto): Promise<HomepageSection | null> {
+    return this.homepageSectionModel.findByIdAndUpdate(id, updateHomepageSectionDto, { new: true }).exec();
   }
 }

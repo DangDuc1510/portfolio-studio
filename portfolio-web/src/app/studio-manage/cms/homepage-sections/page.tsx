@@ -66,11 +66,51 @@ export default function HomepageSectionsListPage() {
 
               <div className="mb-4">
                 <p className="text-gray-400 text-xs mb-2">Content Preview:</p>
-                <div className="bg-[#2C2C2C] border border-white/10 rounded-lg p-3 max-h-24 overflow-y-auto">
-                  <pre className="text-gray-300 text-xs whitespace-pre-wrap">
-                    {JSON.stringify(section.content, null, 2).slice(0, 150)}
-                    {JSON.stringify(section.content, null, 2).length > 150 && "..."}
-                  </pre>
+                <div className="bg-[#2C2C2C] border border-white/10 rounded-lg p-3 max-h-32 overflow-y-auto">
+                  {section.content?.title ? (
+                    <div className="space-y-1">
+                      <p className="text-white text-sm font-medium">
+                        {section.content.title}
+                      </p>
+                      {section.content.subtitle && (
+                        <p className="text-gray-300 text-xs line-clamp-2">
+                          {section.content.subtitle}
+                        </p>
+                      )}
+                      {section.content.description && (
+                        <p className="text-gray-300 text-xs line-clamp-2">
+                          {section.content.description}
+                        </p>
+                      )}
+                      {(section.content.backgroundImage ||
+                        section.content.image) && (
+                        <p className="text-green-400 text-xs">
+                          ✓ Image uploaded
+                        </p>
+                      )}
+                      {(section.content.primaryButtonText ||
+                        section.content.secondaryButtonText) && (
+                        <p className="text-blue-400 text-xs">
+                          ✓ CTA Buttons configured
+                        </p>
+                      )}
+                      {Array.isArray(section.content.services) &&
+                        section.content.services.length > 0 && (
+                          <p className="text-purple-400 text-xs">
+                            ✓ {section.content.services.length} services
+                          </p>
+                        )}
+                    </div>
+                  ) : (
+                    <pre className="text-gray-300 text-xs whitespace-pre-wrap">
+                      {JSON.stringify(section.content || {}, null, 2).slice(
+                        0,
+                        150
+                      )}
+                      {JSON.stringify(section.content || {}, null, 2).length >
+                        150 && "..."}
+                    </pre>
+                  )}
                 </div>
               </div>
 

@@ -12,12 +12,19 @@ export default function CategoriesListPage() {
   const deleteCategory = useDeleteCategory();
 
   const handleDelete = async (id: string, name: string) => {
+    // Prevent deletion of "Video" category
+    if (name.toLowerCase() === "video") {
+      alert("Cannot delete the 'Video' category");
+      return;
+    }
+    
     if (confirm(`Are you sure you want to delete category "${name}"?`)) {
       try {
         await deleteCategory.mutateAsync(id);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Failed to delete category:", error);
-        alert("Failed to delete category");
+        const errorMessage = error?.response?.data?.message || error?.message || "Failed to delete category";
+        alert(errorMessage);
       }
     }
   };
@@ -82,13 +89,15 @@ export default function CategoriesListPage() {
                   <EditOutlined />
                   <span>Edit</span>
                 </Link>
-                <button
-                  onClick={() => handleDelete(category._id, category.name)}
-                  disabled={deleteCategory.isPending}
-                  className="flex items-center justify-center gap-2 px-4 py-2 bg-transparent hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-lg transition-all border border-red-500/30 hover:border-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <DeleteOutlined />
-                </button>
+                {category.name.toLowerCase() !== "video" && (
+                  <button
+                    onClick={() => handleDelete(category._id, category.name)}
+                    disabled={deleteCategory.isPending}
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-transparent hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-lg transition-all border border-red-500/30 hover:border-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <DeleteOutlined />
+                  </button>
+                )}
               </div>
             </div>
           ))}

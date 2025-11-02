@@ -27,8 +27,30 @@ export const deleteAlbum = async (id: string) => {
 };
 
 // Customers API
-export const getCustomers = async () => {
-  const response = await axiosInstance.get('/customers');
+export const getCustomers = async (filters?: {
+  search?: string;
+  status?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}) => {
+  const params = new URLSearchParams();
+  if (filters?.search) params.append('search', filters.search);
+  if (filters?.status) params.append('status', filters.status);
+  if (filters?.page) params.append('page', filters.page.toString());
+  if (filters?.limit) params.append('limit', filters.limit.toString());
+  if (filters?.sortBy) params.append('sortBy', filters.sortBy);
+  if (filters?.sortOrder) params.append('sortOrder', filters.sortOrder);
+  
+  const queryString = params.toString();
+  const url = queryString ? `/customers?${queryString}` : '/customers';
+  const apiKey = process.env.NEXT_PUBLIC_CMS_API_KEY;
+  const response = await axiosInstance.get(url, {
+    headers: {
+      ...(apiKey && { 'X-API-Key': apiKey }),
+    },
+  });
   return response.data;
 };
 
@@ -39,6 +61,16 @@ export const getCustomerById = async (id: string) => {
 
 export const createCustomer = async (customerData: any) => {
   const response = await axiosInstance.post('/customers', customerData);
+  return response.data;
+};
+
+export const updateCustomerById = async (id: string, data: any) => {
+  const apiKey = process.env.NEXT_PUBLIC_CMS_API_KEY;
+  const response = await axiosInstance.patch(`/customers/${id}`, data, {
+    headers: {
+      ...(apiKey && { 'X-API-Key': apiKey }),
+    },
+  });
   return response.data;
 };
 
@@ -104,7 +136,17 @@ export const getHomepageSections = async () => {
 };
 
 export const updateHomepageSection = async (id: string, sectionData: any) => {
-  const response = await axiosInstance.patch(`/homepage-sections/${id}`, sectionData);
+  const apiKey = process.env.NEXT_PUBLIC_CMS_API_KEY;
+  const response = await axiosInstance.patch(`/homepage-sections/${id}`, sectionData, {
+    headers: {
+      ...(apiKey && { 'X-API-Key': apiKey }),
+    },
+  });
+  return response.data;
+};
+
+export const getHomepageSectionById = async (id: string) => {
+  const response = await axiosInstance.get(`/homepage-sections/${id}`);
   return response.data;
 };
 
@@ -170,6 +212,17 @@ export const updateCategory = async (id: string, categoryData: any) => {
 export const deleteCategory = async (id: string) => {
   const apiKey = process.env.NEXT_PUBLIC_CMS_API_KEY;
   const response = await axiosInstance.delete(`/categories/${id}`, {
+    headers: {
+      ...(apiKey && { 'X-API-Key': apiKey }),
+    },
+  });
+  return response.data;
+};
+
+// Stats API
+export const getDashboardStats = async () => {
+  const apiKey = process.env.NEXT_PUBLIC_CMS_API_KEY;
+  const response = await axiosInstance.get('/stats/dashboard', {
     headers: {
       ...(apiKey && { 'X-API-Key': apiKey }),
     },

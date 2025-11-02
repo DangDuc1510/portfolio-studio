@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Put, Patch, Body, Param, UseGuards } from '@nestjs/common';
 import { HomepageSectionsService } from './homepage-sections.service';
 import { UpdateHomepageSectionDto } from './dto/update-homepage-section.dto';
 import { ApiKeyGuard } from '../auth/api-key.guard';
@@ -12,6 +12,11 @@ export class HomepageSectionsController {
     return this.homepageSectionsService.findAll();
   }
 
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.homepageSectionsService.findById(id);
+  }
+
   @Put(':sectionName')
   @UseGuards(ApiKeyGuard)
   update(
@@ -19,5 +24,14 @@ export class HomepageSectionsController {
     @Body() updateHomepageSectionDto: UpdateHomepageSectionDto,
   ) {
     return this.homepageSectionsService.update(sectionName, updateHomepageSectionDto);
+  }
+
+  @Patch(':id')
+  @UseGuards(ApiKeyGuard)
+  updateById(
+    @Param('id') id: string,
+    @Body() updateHomepageSectionDto: UpdateHomepageSectionDto,
+  ) {
+    return this.homepageSectionsService.updateById(id, updateHomepageSectionDto);
   }
 }

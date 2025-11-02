@@ -10,6 +10,7 @@ import { CustomersModule } from './customers/customers.module';
 import { HomepageSectionsModule } from './homepage-sections/homepage-sections.module';
 import { UploadModule } from './upload/upload.module';
 import { CategoriesModule } from './categories/categories.module';
+import { StatsModule } from './stats/stats.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CategoriesModule } from './categories/categories.module';
     HomepageSectionsModule,
     UploadModule,
     CategoriesModule,
+    StatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

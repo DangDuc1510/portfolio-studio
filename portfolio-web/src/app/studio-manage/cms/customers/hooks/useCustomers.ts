@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getCustomers,
   getCustomerById,
+  updateCustomerById,
   deleteCustomerById,
 } from "@/lib/api";
 
@@ -12,6 +13,13 @@ export interface Customer {
   phone?: string;
   message?: string;
   submissionDate: string;
+  status?: 'pending' | 'contacted' | 'scheduled' | 'completed' | 'cancelled';
+  note?: string;
+  serviceCount?: number;
+  isReturningCustomer?: boolean;
+  previousNote?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // Query keys
@@ -24,10 +32,17 @@ export const customerKeys = {
 };
 
 // Get all customers
-export function useCustomers() {
+export function useCustomers(filters?: {
+  search?: string;
+  status?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}) {
   return useQuery({
-    queryKey: customerKeys.lists(),
-    queryFn: getCustomers,
+    queryKey: filters ? [...customerKeys.lists(), filters] : customerKeys.lists(),
+    queryFn: () => getCustomers(filters),
   });
 }
 
@@ -37,6 +52,22 @@ export function useCustomer(id: string | undefined) {
     queryKey: customerKeys.detail(id!),
     queryFn: () => getCustomerById(id!),
     enabled: !!id,
+  });
+}
+
+// Update customer mutation
+export function useUpdateCustomer() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Customer> }) =>
+      updateCustomerById(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: customerKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: customerKeys.detail(variables.id),
+      });
+    },
   });
 }
 

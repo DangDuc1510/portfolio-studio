@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 export type CustomerDocument = Customer & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Customer {
   @Prop({ required: true })
   name: string;
@@ -19,6 +19,16 @@ export class Customer {
 
   @Prop({ default: Date.now })
   submissionDate: Date;
+
+  @Prop({ 
+    type: String, 
+    enum: ['pending', 'contacted', 'scheduled', 'completed', 'cancelled'],
+    default: 'pending'
+  })
+  status: string;
+
+  @Prop()
+  note: string;
 }
 
 export const CustomerSchema = SchemaFactory.createForClass(Customer);

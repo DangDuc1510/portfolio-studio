@@ -42,6 +42,13 @@ export class CategoriesService {
   }
 
   async remove(id: string): Promise<Category | null> {
+    const category = await this.categoryModel.findById(id).exec();
+    
+    // Prevent deletion of "Video" category
+    if (category && category.name.toLowerCase() === 'video') {
+      throw new Error('Cannot delete the "Video" category');
+    }
+    
     return this.categoryModel.findByIdAndDelete(id).exec();
   }
 }
