@@ -1,21 +1,37 @@
 {
-  "name": "portfolio-studio",
-  "version": "1.0.0",
+  "name": "portfolio-web",
+  "version": "1.1.0",
   "private": true,
-  "description": "Portfolio Studio Monorepo",
-  "workspaces": [
-    "portfolio-web",
-    "portfolio-backend"
-  ],
   "scripts": {
-    "dev:web": "cd portfolio-web && npm run dev",
-    "dev:backend": "cd portfolio-backend && npm run dev",
-    "dev": "npm run dev:backend & npm run dev:web",
-    "build:web": "cd portfolio-web && npm run build",
-    "build:backend": "cd portfolio-backend && npm run build",
-    "install:all": "npm install && cd portfolio-web && npm install && cd ../portfolio-backend && npm install"
+    "dev": "next dev --turbopack --port 4000",
+    "build": "next build --turbopack",
+    "start": "next start",
+    "lint": "eslint"
   },
-  "engines": {
-    "node": ">=18.0.0"
+  "dependencies": {
+    "@ant-design/icons": "^5.6.1",
+    "@ant-design/nextjs-registry": "^1.1.0",
+    "@tanstack/react-query": "^5.90.6",
+    "@tanstack/react-query-devtools": "^5.90.2",
+    "antd": "^5.27.4",
+    "axios": "^1.12.2",
+    "cloudinary": "^2.8.0",
+    "mongoose": "^8.19.1",
+    "next": "15.5.3",
+    "postcss": "^8.5.6",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "recharts": "^3.3.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4.1.14",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.3",
+    "tailwindcss": "^4.1.14",
+    "typescript": "^5"
   }
 }
