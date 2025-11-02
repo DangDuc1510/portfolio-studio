@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose';
 
 export type ProductDocument = Product & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Product {
   @Prop({ required: true })
   name: string;
@@ -19,6 +19,12 @@ export class Product {
 
   @Prop({ type: Types.ObjectId, ref: 'Album' })
   albumId: Types.ObjectId;
+
+  @Prop()
+  videoUrl: string;
+
+  @Prop()
+  thumbnail: string;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

@@ -15,6 +15,10 @@ export interface Product {
   images: string[];
   category: string;
   albumId: string;
+  videoUrl?: string;
+  thumbnail?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // Query keys
@@ -31,6 +35,10 @@ export function useProducts(filters?: {
   search?: string;
   category?: string;
   albumId?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }) {
   return useQuery({
     queryKey: filters

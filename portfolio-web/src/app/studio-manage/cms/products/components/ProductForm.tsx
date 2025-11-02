@@ -43,6 +43,8 @@ export default function ProductForm({
     images: [],
     category: "",
     albumId: "",
+    videoUrl: "",
+    thumbnail: "",
   });
 
   useEffect(() => {
@@ -53,6 +55,8 @@ export default function ProductForm({
         images: product.images || [],
         category: product.category || "",
         albumId: product.albumId || "",
+        videoUrl: product.videoUrl || "",
+        thumbnail: product.thumbnail || "",
       });
     }
   }, [product]);
@@ -136,6 +140,42 @@ export default function ProductForm({
           className="w-full px-4 py-3 mt-2 bg-[#2C2C2C]/80 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:ring-2 focus:ring-white/20 transition-all resize-none font-mono text-sm"
           placeholder="Or paste image URLs here (one per line)"
         />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-white text-sm font-medium mb-2">
+            Video URL
+          </label>
+          <input
+            type="url"
+            value={form.videoUrl}
+            onChange={(e) => setForm({ ...form, videoUrl: e.target.value })}
+            className="w-full px-4 py-3 bg-[#2C2C2C]/80 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:ring-2 focus:ring-white/20 transition-all"
+            placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
+          />
+          <p className="text-gray-400 text-xs mt-2">
+            Paste YouTube, Vimeo, or other video platform URL
+          </p>
+        </div>
+
+        <div>
+          <label className="block text-white text-sm font-medium mb-2">
+            Thumbnail
+          </label>
+          <ImageUpload
+            label=""
+            value={form.thumbnail}
+            onChange={(url) => setForm({ ...form, thumbnail: url || "" })}
+          />
+          <input
+            type="url"
+            value={form.thumbnail}
+            onChange={(e) => setForm({ ...form, thumbnail: e.target.value })}
+            className="w-full px-4 py-3 mt-2 bg-[#2C2C2C]/80 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:ring-2 focus:ring-white/20 transition-all"
+            placeholder="Or paste thumbnail image URL here"
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

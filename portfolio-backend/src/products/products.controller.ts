@@ -21,6 +21,8 @@ export class ProductsController {
     @Query('albumId') albumId?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortOrder') sortOrder?: string,
   ) {
     const pageNum = page ? parseInt(page, 10) : 1;
     const limitNum = limit ? parseInt(limit, 10) : 12;
@@ -30,6 +32,8 @@ export class ProductsController {
       albumId,
       page: pageNum,
       limit: limitNum,
+      sortBy: sortBy || 'createdAt',
+      sortOrder: (sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc',
     });
   }
 

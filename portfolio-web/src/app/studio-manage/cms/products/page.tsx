@@ -12,6 +12,8 @@ import {
   AppstoreOutlined,
   UnorderedListOutlined,
   SearchOutlined,
+  SortAscendingOutlined,
+  SortDescendingOutlined,
 } from "@ant-design/icons";
 
 export default function ProductsListPage() {
@@ -23,6 +25,7 @@ export default function ProductsListPage() {
   const [selectedAlbum, setSelectedAlbum] = useState<string | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(12);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   // Build filters object
   const filters = useMemo(() => {
@@ -32,9 +35,13 @@ export default function ProductsListPage() {
       albumId?: string;
       page?: number;
       limit?: number;
+      sortBy?: string;
+      sortOrder?: "asc" | "desc";
     } = {
       page: currentPage,
       limit: pageSize,
+      sortBy: "createdAt",
+      sortOrder: sortOrder,
     };
 
     if (searchQuery) filterObj.search = searchQuery;
@@ -42,7 +49,14 @@ export default function ProductsListPage() {
     if (selectedAlbum) filterObj.albumId = selectedAlbum;
 
     return filterObj;
-  }, [searchQuery, selectedCategory, selectedAlbum, currentPage, pageSize]);
+  }, [
+    searchQuery,
+    selectedCategory,
+    selectedAlbum,
+    currentPage,
+    pageSize,
+    sortOrder,
+  ]);
 
   const { data, isLoading } = useProducts(filters);
   const products = data?.data || [];
@@ -64,6 +78,16 @@ export default function ProductsListPage() {
   const getAlbumName = (albumId: string) => {
     const album = albums.find((a: Album) => a._id === albumId);
     return album?.name || null;
+  };
+
+  const getProductImage = (product: Product) => {
+    if (product.images && product.images.length > 0 && product.images[0]) {
+      return product.images[0];
+    }
+    if (product.thumbnail) {
+      return product.thumbnail;
+    }
+    return "image.jpg";
   };
 
   const handleDelete = async (id: string, name: string) => {
@@ -129,7 +153,7 @@ export default function ProductsListPage() {
 
       {/* Filters and Search - Show for both grid and list modes */}
       <div className="mb-6 bg-gradient-to-br from-[#414141] via-[#303030] to-[#2C2C2C] backdrop-blur-xl rounded-2xl p-6 border border-white/10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Search */}
           <div>
             <label className="block text-white text-sm font-medium mb-2">
@@ -189,6 +213,41 @@ export default function ProductsListPage() {
               }))}
             />
           </div>
+
+          {/* Sort by Created At */}
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">
+              Sort by Date
+            </label>
+            <Select
+              value={sortOrder}
+              onChange={(value) => {
+                setSortOrder(value);
+                handleFilterChange();
+              }}
+              className="w-full"
+              options={[
+                {
+                  label: (
+                    <span className="flex items-center gap-2">
+                      <SortDescendingOutlined />
+                      Newest First
+                    </span>
+                  ),
+                  value: "desc",
+                },
+                {
+                  label: (
+                    <span className="flex items-center gap-2">
+                      <SortAscendingOutlined />
+                      Oldest First
+                    </span>
+                  ),
+                  value: "asc",
+                },
+              ]}
+            />
+          </div>
         </div>
       </div>
 
@@ -216,12 +275,12 @@ export default function ProductsListPage() {
               {products.map((product: Product) => (
                 <div
                   key={product._id}
-                  className="bg-gradient-to-br from-[#414141] via-[#303030] to-[#2C2C2C] backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all"
+                  className="bg-gradient-to-br from-[#414141] via-[#303030] to-[#2C2C2C] backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all flex flex-col justify-between"
                 >
-                  {product.images && product.images.length > 0 && (
+                  {getProductImage(product) && (
                     <div className="mb-4 rounded-xl overflow-hidden bg-[#2C2C2C] aspect-video flex items-center justify-center">
                       <img
-                        src={product.images[0]}
+                        src={getProductImage(product)!}
                         alt={product.name}
                         className="w-full h-full object-cover"
                         onError={(e) => {
@@ -236,6 +295,34 @@ export default function ProductsListPage() {
                   <p className="text-gray-400 text-sm mb-3 line-clamp-2">
                     {product.description || "No description"}
                   </p>
+                  {(product.createdAt || product.updatedAt) && (
+                    <div className="text-xs text-gray-500 mb-3 space-y-1">
+                      {product.createdAt && (
+                        <div>
+                          Created:{" "}
+                          {new Date(product.createdAt).toLocaleDateString(
+                            "vi-VN"
+                          )}{" "}
+                          {new Date(product.createdAt).toLocaleTimeString(
+                            "vi-VN",
+                            { hour: "2-digit", minute: "2-digit" }
+                          )}
+                        </div>
+                      )}
+                      {product.updatedAt && (
+                        <div>
+                          Updated:{" "}
+                          {new Date(product.updatedAt).toLocaleDateString(
+                            "vi-VN"
+                          )}{" "}
+                          {new Date(product.updatedAt).toLocaleTimeString(
+                            "vi-VN",
+                            { hour: "2-digit", minute: "2-digit" }
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <div className="flex items-center gap-2 mb-4">
                     <span className="px-3 py-1 bg-[#2C2C2C] border border-white/10 rounded-lg text-xs text-gray-300">
                       {product.category || "Uncategorized"}
@@ -275,10 +362,10 @@ export default function ProductsListPage() {
                 >
                   <div className="flex gap-6">
                     {/* Image */}
-                    {product.images && product.images.length > 0 && (
+                    {getProductImage(product) && (
                       <div className="w-32 h-32 rounded-xl overflow-hidden bg-[#2C2C2C] flex-shrink-0">
                         <img
-                          src={product.images[0]}
+                          src={getProductImage(product)!}
                           alt={product.name}
                           className="w-full h-full object-cover"
                           onError={(e) => {
@@ -299,6 +386,38 @@ export default function ProductsListPage() {
                           <p className="text-gray-400 text-sm mb-3 line-clamp-2">
                             {product.description || "No description"}
                           </p>
+                          {(product.createdAt || product.updatedAt) && (
+                            <div className="text-xs text-gray-500 mb-3 space-y-1">
+                              {product.createdAt && (
+                                <div>
+                                  Created:{" "}
+                                  {new Date(
+                                    product.createdAt
+                                  ).toLocaleDateString("vi-VN")}{" "}
+                                  {new Date(
+                                    product.createdAt
+                                  ).toLocaleTimeString("vi-VN", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </div>
+                              )}
+                              {product.updatedAt && (
+                                <div>
+                                  Updated:{" "}
+                                  {new Date(
+                                    product.updatedAt
+                                  ).toLocaleDateString("vi-VN")}{" "}
+                                  {new Date(
+                                    product.updatedAt
+                                  ).toLocaleTimeString("vi-VN", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </div>
+                              )}
+                            </div>
+                          )}
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="px-3 py-1 bg-[#2C2C2C] border border-white/10 rounded-lg text-xs text-gray-300">
                               {product.category || "Uncategorized"}

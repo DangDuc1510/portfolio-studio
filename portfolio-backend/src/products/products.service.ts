@@ -5,6 +5,7 @@ import { Product, ProductDocument } from './schemas/product.schema';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { CategoriesService } from '../categories/categories.service';
+import { AlbumsService } from '../albums/albums.service';
 
 @Injectable()
 export class ProductsService {
@@ -12,6 +13,8 @@ export class ProductsService {
     @InjectModel(Product.name) private productModel: Model<ProductDocument>,
     @Inject(forwardRef(() => CategoriesService))
     private categoriesService: CategoriesService,
+    @Inject(forwardRef(() => AlbumsService))
+    private albumsService: AlbumsService,
   ) {}
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
@@ -21,8 +24,14 @@ export class ProductsService {
         albumId: new Types.ObjectId(createProductDto.albumId),
       }),
     };
-    const createdProduct = new this.productModel(productData);
-    return createdProduct.save();
+    const createdProduct = await new this.productModel(productData).save();
+    
+    // Sync album's productIds if albumId is set
+    if (createProductDto.albumId) {
+      await this.syncAlbumProductIds(createProductDto.albumId);
+    }
+    
+    return createdProduct;
   }
 
   async findAll(filters?: {
@@ -31,6 +40,8 @@ export class ProductsService {
     albumId?: string;
     page?: number;
     limit?: number;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
   }): Promise<{
     data: Product[];
     total: number;
@@ -59,8 +70,13 @@ export class ProductsService {
     const limit = filters?.limit || 12;
     const skip = (page - 1) * limit;
 
+    // Sort options
+    const sortBy = filters?.sortBy || 'createdAt';
+    const sortOrder = filters?.sortOrder === 'asc' ? 1 : -1;
+    const sort: any = { [sortBy]: sortOrder };
+
     const [data, total] = await Promise.all([
-      this.productModel.find(query).skip(skip).limit(limit).exec(),
+      this.productModel.find(query).sort(sort).skip(skip).limit(limit).exec(),
       this.productModel.countDocuments(query).exec(),
     ]);
 
@@ -78,17 +94,69 @@ export class ProductsService {
   }
 
   async update(id: string, updateProductDto: UpdateProductDto): Promise<Product | null> {
-    const updateData = {
-      ...updateProductDto,
-      ...(updateProductDto.albumId && {
-        albumId: new Types.ObjectId(updateProductDto.albumId),
-      }),
-    };
-    return this.productModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
+    // Get old product to check old albumId
+    const oldProduct = await this.productModel.findById(id).exec();
+    
+    const updateData: any = { ...updateProductDto };
+    let oldAlbumId: string | null = null;
+    let newAlbumId: string | null = null;
+    
+    if (oldProduct?.albumId) {
+      oldAlbumId = oldProduct.albumId.toString();
+    }
+    
+    if (updateProductDto.albumId !== undefined) {
+      if (updateProductDto.albumId === null || updateProductDto.albumId === '') {
+        updateData.albumId = null;
+        newAlbumId = null;
+      } else {
+        updateData.albumId = new Types.ObjectId(updateProductDto.albumId);
+        newAlbumId = updateProductDto.albumId;
+      }
+    } else {
+      newAlbumId = oldAlbumId;
+    }
+    
+    const updatedProduct = await this.productModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
+    
+    // Sync album's productIds when albumId changes
+    if (oldAlbumId !== newAlbumId) {
+      // Sync old album (remove product from old album)
+      if (oldAlbumId) {
+        await this.syncAlbumProductIds(oldAlbumId);
+      }
+      // Sync new album (add product to new album)
+      if (newAlbumId) {
+        await this.syncAlbumProductIds(newAlbumId);
+      }
+    }
+    
+    return updatedProduct;
   }
 
   async remove(id: string): Promise<Product | null> {
-    return this.productModel.findByIdAndDelete(id).exec();
+    // Get product before deleting to sync album
+    const product = await this.productModel.findById(id).exec();
+    
+    const deletedProduct = await this.productModel.findByIdAndDelete(id).exec();
+    
+    // Sync album's productIds if product had an albumId
+    if (product?.albumId) {
+      await this.syncAlbumProductIds(product.albumId.toString());
+    }
+    
+    return deletedProduct;
+  }
+
+  // Helper method to sync productIds in album
+  private async syncAlbumProductIds(albumId: string): Promise<void> {
+    // Find all products with this albumId
+    const products = await this.productModel.find({ albumId: new Types.ObjectId(albumId) }).exec();
+    
+    const productIds = products.map((p) => p._id);
+    
+    // Update album's productIds using AlbumsService
+    await this.albumsService.syncProductIds(albumId);
   }
 
   async getCategories(): Promise<string[]> {

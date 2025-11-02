@@ -20,4 +20,12 @@ export class CreateProductDto {
   @IsOptional()
   @IsString()
   albumId?: string;
+
+  @IsOptional()
+  @IsString()
+  videoUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  thumbnail?: string;
 }

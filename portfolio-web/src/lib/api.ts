@@ -54,6 +54,8 @@ export const getProducts = async (filters?: {
   albumId?: string;
   page?: number;
   limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }) => {
   const params = new URLSearchParams();
   if (filters?.search) params.append('search', filters.search);
@@ -61,6 +63,8 @@ export const getProducts = async (filters?: {
   if (filters?.albumId) params.append('albumId', filters.albumId);
   if (filters?.page) params.append('page', filters.page.toString());
   if (filters?.limit) params.append('limit', filters.limit.toString());
+  if (filters?.sortBy) params.append('sortBy', filters.sortBy);
+  if (filters?.sortOrder) params.append('sortOrder', filters.sortOrder);
   
   const queryString = params.toString();
   const url = queryString ? `/products?${queryString}` : '/products';

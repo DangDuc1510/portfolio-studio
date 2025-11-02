@@ -1,14 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Select } from "antd";
 import {
   useAlbum,
   useCreateAlbum,
   useUpdateAlbum,
   Album,
 } from "../hooks/useAlbums";
-import { useProducts, Product } from "../../products/hooks/useProducts";
 import ImageUpload from "@/components/ImageUpload";
 
 interface AlbumFormProps {
@@ -19,18 +17,16 @@ interface AlbumFormProps {
 export default function AlbumForm({ albumId, onSuccess }: AlbumFormProps) {
   const router = useRouter();
   const { data: album, isLoading: isLoadingAlbum } = useAlbum(albumId);
-  const { data: products = [], isLoading: isLoadingProducts } = useProducts();
   const createAlbum = useCreateAlbum();
   const updateAlbum = useUpdateAlbum();
 
-  const isLoading = isLoadingAlbum || isLoadingProducts;
+  const isLoading = isLoadingAlbum;
   const isSubmitting = createAlbum.isPending || updateAlbum.isPending;
 
-  const [form, setForm] = useState<Omit<Album, "_id">>({
+  const [form, setForm] = useState<Omit<Album, "_id" | "productIds">>({
     name: "",
     description: "",
     coverImage: "",
-    productIds: [],
   });
 
   useEffect(() => {
@@ -39,7 +35,6 @@ export default function AlbumForm({ albumId, onSuccess }: AlbumFormProps) {
         name: album.name,
         description: album.description || "",
         coverImage: album.coverImage || "",
-        productIds: album.productIds || [],
       });
     }
   }, [album]);
@@ -113,29 +108,6 @@ export default function AlbumForm({ albumId, onSuccess }: AlbumFormProps) {
           className="w-full px-4 py-3 mt-2 bg-[#2C2C2C]/80 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:ring-2 focus:ring-white/20 transition-all"
           placeholder="Or paste image URL here"
         />
-      </div>
-
-      <div>
-        <label className="block text-white text-sm font-medium mb-2">
-          Products
-        </label>
-        <Select
-          mode="multiple"
-          value={form.productIds}
-          onChange={(values) => setForm({ ...form, productIds: values })}
-          placeholder="Select products"
-          allowClear
-          style={{ width: "100%" }}
-          className="product-select"
-          disabled={isLoadingProducts}
-          options={products.map((product: Product) => ({
-            label: product.name,
-            value: product._id,
-          }))}
-        />
-        <p className="text-gray-400 text-xs mt-2">
-          Select one or more products to include in this album
-        </p>
       </div>
 
       <div className="flex gap-4 pt-4">
