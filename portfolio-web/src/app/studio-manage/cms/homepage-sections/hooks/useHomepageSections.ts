@@ -5,7 +5,7 @@ import {
 } from "@/lib/api";
 
 export interface HomepageSection {
-  id: string;
+  _id: string;
   sectionName: string;
   isVisible: boolean;
   content: any;

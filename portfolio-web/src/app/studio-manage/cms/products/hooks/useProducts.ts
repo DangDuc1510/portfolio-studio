@@ -2,13 +2,14 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getProducts,
   getProductById,
+  getProductCategories,
   createProduct,
   updateProductById,
   deleteProductById,
 } from "@/lib/api";
 
 export interface Product {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   images: string[];
@@ -26,10 +27,24 @@ export const productKeys = {
 };
 
 // Get all products
-export function useProducts() {
+export function useProducts(filters?: {
+  search?: string;
+  category?: string;
+  albumId?: string;
+}) {
   return useQuery({
-    queryKey: productKeys.lists(),
-    queryFn: getProducts,
+    queryKey: filters
+      ? [...productKeys.lists(), filters]
+      : productKeys.lists(),
+    queryFn: () => getProducts(filters),
+  });
+}
+
+// Get product categories
+export function useProductCategories() {
+  return useQuery({
+    queryKey: [...productKeys.all, "categories"],
+    queryFn: getProductCategories,
   });
 }
 
@@ -50,6 +65,7 @@ export function useCreateProduct() {
     mutationFn: createProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: productKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: [...productKeys.all, "categories"] });
     },
   });
 }
@@ -66,6 +82,7 @@ export function useUpdateProduct() {
       queryClient.invalidateQueries({
         queryKey: productKeys.detail(variables.id),
       });
+      queryClient.invalidateQueries({ queryKey: [...productKeys.all, "categories"] });
     },
   });
 }
@@ -78,6 +95,7 @@ export function useDeleteProduct() {
     mutationFn: deleteProductById,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: productKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: [...productKeys.all, "categories"] });
     },
   });
 }

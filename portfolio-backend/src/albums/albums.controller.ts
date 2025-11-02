@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
@@ -27,6 +27,12 @@ export class AlbumsController {
   @Put(':id')
   @UseGuards(ApiKeyGuard)
   update(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
+    return this.albumsService.update(id, updateAlbumDto);
+  }
+
+  @Patch(':id')
+  @UseGuards(ApiKeyGuard)
+  patch(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
     return this.albumsService.update(id, updateAlbumDto);
   }
 

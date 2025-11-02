@@ -10,6 +10,7 @@ import {
   TeamOutlined,
   HomeOutlined,
   LogoutOutlined,
+  AppstoreOutlined,
 } from "@ant-design/icons";
 import OTPInput from "@/components/OTPInput";
 
@@ -87,6 +88,12 @@ export default function CmsLayout({ children }: { children: React.ReactNode }) {
       label: "Products",
       icon: ShoppingOutlined,
       isActive: pathname.includes("/products"),
+    },
+    {
+      href: `${basePath}/categories`,
+      label: "Categories",
+      icon: AppstoreOutlined,
+      isActive: pathname.includes("/categories"),
     },
     {
       href: `${basePath}/albums`,

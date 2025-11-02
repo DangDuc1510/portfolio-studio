@@ -1,12 +1,16 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Select } from "antd";
 import {
   useProduct,
   useCreateProduct,
   useUpdateProduct,
   Product,
 } from "../hooks/useProducts";
+import { useAlbums, Album } from "../../albums/hooks/useAlbums";
+import { useCategories, Category } from "../../categories/hooks/useCategories";
+import ImageUpload from "@/components/ImageUpload";
 
 interface ProductFormProps {
   productId?: string;
@@ -19,13 +23,21 @@ export default function ProductForm({
 }: ProductFormProps) {
   const router = useRouter();
   const { data: product, isLoading: isLoadingProduct } = useProduct(productId);
+  const { data: albums = [], isLoading: isLoadingAlbums } = useAlbums();
+  const { data: categories = [], isLoading: isLoadingCategories } =
+    useCategories();
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
 
-  const isLoading = isLoadingProduct;
+  const isLoading = isLoadingProduct || isLoadingAlbums || isLoadingCategories;
   const isSubmitting = createProduct.isPending || updateProduct.isPending;
 
-  const [form, setForm] = useState<Omit<Product, "id">>({
+  const categoryOptions = categories.map((cat: Category) => ({
+    label: cat.name,
+    value: cat.name,
+  }));
+
+  const [form, setForm] = useState<Omit<Product, "_id">>({
     name: "",
     description: "",
     images: [],
@@ -102,9 +114,16 @@ export default function ProductForm({
       </div>
 
       <div>
-        <label className="block text-white text-sm font-medium mb-2">
-          Images (URLs, one per line)
-        </label>
+        <ImageUpload
+          label="Product Images"
+          multiple
+          multipleUrls={form.images}
+          onMultipleChange={(urls) => setForm({ ...form, images: urls })}
+        />
+        <p className="text-gray-400 text-xs mt-2">
+          Upload multiple images for your product. You can also manually add
+          URLs below.
+        </p>
         <textarea
           value={form.images.join("\n")}
           onChange={(e) =>
@@ -113,13 +132,10 @@ export default function ProductForm({
               images: e.target.value.split("\n").filter((url) => url.trim()),
             })
           }
-          rows={4}
-          className="w-full px-4 py-3 bg-[#2C2C2C]/80 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:ring-2 focus:ring-white/20 transition-all resize-none font-mono text-sm"
-          placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
+          rows={2}
+          className="w-full px-4 py-3 mt-2 bg-[#2C2C2C]/80 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:ring-2 focus:ring-white/20 transition-all resize-none font-mono text-sm"
+          placeholder="Or paste image URLs here (one per line)"
         />
-        <p className="text-gray-400 text-xs mt-2">
-          Enter one image URL per line
-        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -127,25 +143,35 @@ export default function ProductForm({
           <label className="block text-white text-sm font-medium mb-2">
             Category
           </label>
-          <input
-            type="text"
-            value={form.category}
-            onChange={(e) => setForm({ ...form, category: e.target.value })}
-            className="w-full px-4 py-3 bg-[#2C2C2C]/80 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:ring-2 focus:ring-white/20 transition-all"
-            placeholder="e.g., Photography, Videography"
+          <Select
+            value={form.category || undefined}
+            onChange={(value) => setForm({ ...form, category: value || "" })}
+            placeholder="Select a category"
+            allowClear
+            showSearch
+            style={{ width: "100%" }}
+            className="category-select"
+            options={categoryOptions}
           />
         </div>
 
         <div>
           <label className="block text-white text-sm font-medium mb-2">
-            Album ID
+            Album
           </label>
-          <input
-            type="text"
-            value={form.albumId}
-            onChange={(e) => setForm({ ...form, albumId: e.target.value })}
-            className="w-full px-4 py-3 bg-[#2C2C2C]/80 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:ring-2 focus:ring-white/20 transition-all"
-            placeholder="Enter album ID"
+          <Select
+            value={form.albumId || undefined}
+            onChange={(value) => setForm({ ...form, albumId: value || "" })}
+            placeholder="Select an album"
+            allowClear
+            showSearch
+            style={{ width: "100%" }}
+            className="album-select"
+            disabled={isLoadingAlbums}
+            options={albums.map((album: Album) => ({
+              label: album.name,
+              value: album._id,
+            }))}
           />
         </div>
       </div>

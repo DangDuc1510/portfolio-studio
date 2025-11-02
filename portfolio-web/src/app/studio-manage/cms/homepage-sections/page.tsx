@@ -40,7 +40,7 @@ export default function HomepageSectionsListPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {sections.map((section: HomepageSection) => (
             <div
-              key={section.id}
+              key={section._id}
               className="bg-gradient-to-br from-[#414141] via-[#303030] to-[#2C2C2C] backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all"
             >
               <div className="flex items-start justify-between mb-4">
@@ -75,7 +75,7 @@ export default function HomepageSectionsListPage() {
               </div>
 
               <Link
-                href={`/studio-manage/cms/homepage-sections/edit/${section.id}`}
+                href={`/studio-manage/cms/homepage-sections/edit/${section._id}`}
                 className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-gradient-to-b from-[#4B4B4B] to-[#41411] hover:from-[#5B5B5B] hover:to-[#4B4B4B] text-white rounded-lg transition-all border border-white/10"
               >
                 <EditOutlined />

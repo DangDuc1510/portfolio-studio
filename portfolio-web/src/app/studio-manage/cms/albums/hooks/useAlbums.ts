@@ -8,7 +8,7 @@ import {
 } from "@/lib/api";
 
 export interface Album {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   coverImage: string;

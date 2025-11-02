@@ -24,6 +24,18 @@ export default function RootLayout({
               theme={{
                 token: {
                   colorPrimary: "#FFDD00",
+                  colorBgContainer: "#2C2C2C",
+                  colorText: "#ffffff",
+                  colorBorder: "rgba(255, 255, 255, 0.1)",
+                  colorTextPlaceholder: "#9ca3af",
+                  colorBgElevated: "#414141",
+                },
+                components: {
+                  Select: {
+                    optionSelectedBg: "#4B4B4B",
+                    optionActiveBg: "#4B4B4B",
+                    selectorBg: "#2C2C2C",
+                  },
                 },
               }}
             >

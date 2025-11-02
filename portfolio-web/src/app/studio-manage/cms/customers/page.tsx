@@ -66,7 +66,7 @@ export default function CustomersListPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {customers.map((customer: Customer) => (
             <div
-              key={customer.id}
+              key={customer._id}
               className="bg-gradient-to-br from-[#414141] via-[#303030] to-[#2C2C2C] backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all"
             >
               <div className="flex items-start justify-between mb-4">
@@ -85,7 +85,7 @@ export default function CustomersListPage() {
                   </div>
                 </div>
                 <button
-                  onClick={() => handleDelete(customer.id, customer.name)}
+                  onClick={() => handleDelete(customer._id, customer.name)}
                   disabled={deleteCustomer.isPending}
                   className="flex items-center justify-center gap-2 px-3 py-2 bg-transparent hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-lg transition-all border border-red-500/30 hover:border-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >

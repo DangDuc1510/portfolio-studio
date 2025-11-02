@@ -1,31 +1,32 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Select } from "antd";
 import {
   useAlbum,
   useCreateAlbum,
   useUpdateAlbum,
   Album,
 } from "../hooks/useAlbums";
+import { useProducts, Product } from "../../products/hooks/useProducts";
+import ImageUpload from "@/components/ImageUpload";
 
 interface AlbumFormProps {
   albumId?: string;
   onSuccess?: () => void;
 }
 
-export default function AlbumForm({
-  albumId,
-  onSuccess,
-}: AlbumFormProps) {
+export default function AlbumForm({ albumId, onSuccess }: AlbumFormProps) {
   const router = useRouter();
   const { data: album, isLoading: isLoadingAlbum } = useAlbum(albumId);
+  const { data: products = [], isLoading: isLoadingProducts } = useProducts();
   const createAlbum = useCreateAlbum();
   const updateAlbum = useUpdateAlbum();
 
-  const isLoading = isLoadingAlbum;
+  const isLoading = isLoadingAlbum || isLoadingProducts;
   const isSubmitting = createAlbum.isPending || updateAlbum.isPending;
 
-  const [form, setForm] = useState<Omit<Album, "id">>({
+  const [form, setForm] = useState<Omit<Album, "_id">>({
     name: "",
     description: "",
     coverImage: "",
@@ -100,51 +101,40 @@ export default function AlbumForm({
       </div>
 
       <div>
-        <label className="block text-white text-sm font-medium mb-2">
-          Cover Image URL
-        </label>
+        <ImageUpload
+          label="Cover Image"
+          value={form.coverImage}
+          onChange={(url) => setForm({ ...form, coverImage: url })}
+        />
         <input
           type="url"
           value={form.coverImage}
           onChange={(e) => setForm({ ...form, coverImage: e.target.value })}
-          className="w-full px-4 py-3 bg-[#2C2C2C]/80 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:ring-2 focus:ring-white/20 transition-all"
-          placeholder="https://example.com/cover-image.jpg"
+          className="w-full px-4 py-3 mt-2 bg-[#2C2C2C]/80 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:ring-2 focus:ring-white/20 transition-all"
+          placeholder="Or paste image URL here"
         />
-        {form.coverImage && (
-          <div className="mt-4 rounded-xl overflow-hidden bg-[#2C2C2C] aspect-video max-w-md">
-            <img
-              src={form.coverImage}
-              alt="Preview"
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-              }}
-            />
-          </div>
-        )}
       </div>
 
       <div>
         <label className="block text-white text-sm font-medium mb-2">
-          Product IDs (one per line)
+          Products
         </label>
-        <textarea
-          value={form.productIds.join("\n")}
-          onChange={(e) =>
-            setForm({
-              ...form,
-              productIds: e.target.value
-                .split("\n")
-                .map((id) => id.trim())
-                .filter((id) => id),
-            })
-          }
-          rows={4}
-          className="w-full px-4 py-3 bg-[#2C2C2C]/80 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-white/30 focus:ring-2 focus:ring-white/20 transition-all resize-none font-mono text-sm"
-          placeholder="product-id-1&#10;product-id-2&#10;product-id-3"
+        <Select
+          mode="multiple"
+          value={form.productIds}
+          onChange={(values) => setForm({ ...form, productIds: values })}
+          placeholder="Select products"
+          allowClear
+          style={{ width: "100%" }}
+          className="product-select"
+          disabled={isLoadingProducts}
+          options={products.map((product: Product) => ({
+            label: product.name,
+            value: product._id,
+          }))}
         />
         <p className="text-gray-400 text-xs mt-2">
-          Enter one product ID per line
+          Select one or more products to include in this album
         </p>
       </div>
 
@@ -172,4 +162,3 @@ export default function AlbumForm({
     </form>
   );
 }
-

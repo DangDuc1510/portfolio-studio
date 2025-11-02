@@ -48,13 +48,33 @@ export const deleteCustomerById = async (id: string) => {
 };
 
 // Products API
-export const getProducts = async () => {
-  const response = await axiosInstance.get('/products');
+export const getProducts = async (filters?: {
+  search?: string;
+  category?: string;
+  albumId?: string;
+  page?: number;
+  limit?: number;
+}) => {
+  const params = new URLSearchParams();
+  if (filters?.search) params.append('search', filters.search);
+  if (filters?.category) params.append('category', filters.category);
+  if (filters?.albumId) params.append('albumId', filters.albumId);
+  if (filters?.page) params.append('page', filters.page.toString());
+  if (filters?.limit) params.append('limit', filters.limit.toString());
+  
+  const queryString = params.toString();
+  const url = queryString ? `/products?${queryString}` : '/products';
+  const response = await axiosInstance.get(url);
   return response.data;
 };
 
 export const getProductById = async (id: string) => {
   const response = await axiosInstance.get(`/products/${id}`);
+  return response.data;
+};
+
+export const getProductCategories = async () => {
+  const response = await axiosInstance.get('/products/categories');
   return response.data;
 };
 
@@ -81,5 +101,74 @@ export const getHomepageSections = async () => {
 
 export const updateHomepageSection = async (id: string, sectionData: any) => {
   const response = await axiosInstance.patch(`/homepage-sections/${id}`, sectionData);
+  return response.data;
+};
+
+// Upload API
+export const uploadImage = async (file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  const apiKey = process.env.NEXT_PUBLIC_CMS_API_KEY;
+  
+  const response = await axiosInstance.post('/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      ...(apiKey && { 'X-API-Key': apiKey }),
+    },
+  });
+  return response.data;
+};
+
+export const deleteUploadedImage = async (url: string, publicId?: string) => {
+  const apiKey = process.env.NEXT_PUBLIC_CMS_API_KEY;
+  
+  const response = await axiosInstance.delete('/upload', {
+    data: { url, publicId },
+    headers: {
+      ...(apiKey && { 'X-API-Key': apiKey }),
+    },
+  });
+  return response.data;
+};
+
+// Categories API
+export const getCategories = async () => {
+  const response = await axiosInstance.get('/categories');
+  return response.data;
+};
+
+export const getCategoryById = async (id: string) => {
+  const response = await axiosInstance.get(`/categories/${id}`);
+  return response.data;
+};
+
+export const createCategory = async (categoryData: any) => {
+  const apiKey = process.env.NEXT_PUBLIC_CMS_API_KEY;
+  const response = await axiosInstance.post('/categories', categoryData, {
+    headers: {
+      ...(apiKey && { 'X-API-Key': apiKey }),
+    },
+  });
+  return response.data;
+};
+
+export const updateCategory = async (id: string, categoryData: any) => {
+  const apiKey = process.env.NEXT_PUBLIC_CMS_API_KEY;
+  const response = await axiosInstance.patch(`/categories/${id}`, categoryData, {
+    headers: {
+      ...(apiKey && { 'X-API-Key': apiKey }),
+    },
+  });
+  return response.data;
+};
+
+export const deleteCategory = async (id: string) => {
+  const apiKey = process.env.NEXT_PUBLIC_CMS_API_KEY;
+  const response = await axiosInstance.delete(`/categories/${id}`, {
+    headers: {
+      ...(apiKey && { 'X-API-Key': apiKey }),
+    },
+  });
   return response.data;
 };

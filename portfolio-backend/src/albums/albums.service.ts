@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Album, AlbumDocument } from './schemas/album.schema';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
@@ -10,7 +10,15 @@ export class AlbumsService {
   constructor(@InjectModel(Album.name) private albumModel: Model<AlbumDocument>) {}
 
   async create(createAlbumDto: CreateAlbumDto): Promise<Album> {
-    const createdAlbum = new this.albumModel(createAlbumDto);
+    const albumData = {
+      ...createAlbumDto,
+      ...(createAlbumDto.productIds && {
+        productIds: createAlbumDto.productIds.map(
+          (id) => new Types.ObjectId(id),
+        ),
+      }),
+    };
+    const createdAlbum = new this.albumModel(albumData);
     return createdAlbum.save();
   }
 
@@ -23,7 +31,15 @@ export class AlbumsService {
   }
 
   async update(id: string, updateAlbumDto: UpdateAlbumDto): Promise<Album | null> {
-    return this.albumModel.findByIdAndUpdate(id, updateAlbumDto, { new: true }).exec();
+    const updateData = {
+      ...updateAlbumDto,
+      ...(updateAlbumDto.productIds && {
+        productIds: updateAlbumDto.productIds.map(
+          (id) => new Types.ObjectId(id),
+        ),
+      }),
+    };
+    return this.albumModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
   }
 
   async remove(id: string): Promise<Album | null> {

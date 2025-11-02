@@ -1,1 +1,98 @@
 @import "tailwindcss";
+
+/* Custom styles for Ant Design Select in dark theme */
+.ant-select-selector {
+  background-color: rgba(44, 44, 44, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  padding: 12px 16px !important; /* py-3 px-4 */
+  min-height: 48px !important; /* Match input height */
+  display: flex !important;
+  align-items: center !important;
+  border-radius: 12px !important;
+}
+
+.ant-select-selection-placeholder {
+  color: #9ca3af !important;
+}
+
+.ant-select-selection-item {
+  color: #ffffff !important;
+}
+
+.ant-select-dropdown {
+  background-color: #414141 !important;
+}
+
+.ant-select-item {
+  color: #ffffff !important;
+}
+
+.ant-select-item-option-selected {
+  background-color: #4B4B4B !important;
+  color: #ffffff !important;
+}
+
+.ant-select-item-option-active {
+  background-color: #4B4B4B !important;
+}
+
+.ant-select-multiple .ant-select-selection-item {
+  background-color: #4B4B4B !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+/* Custom styles for Ant Design Pagination in dark theme */
+.custom-pagination .ant-pagination-item {
+  background-color: #2C2C2C !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.custom-pagination .ant-pagination-item a {
+  color: #ffffff !important;
+}
+
+.custom-pagination .ant-pagination-item-active {
+  background-color: #4B4B4B !important;
+  border-color: #4B4B4B !important;
+}
+
+.custom-pagination .ant-pagination-item-active a {
+  color: #ffffff !important;
+}
+
+.custom-pagination .ant-pagination-prev,
+.custom-pagination .ant-pagination-next {
+  background-color: #2C2C2C !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.custom-pagination .ant-pagination-prev a,
+.custom-pagination .ant-pagination-next a {
+  color: #ffffff !important;
+}
+
+.custom-pagination .ant-pagination-options {
+  color: #ffffff !important;
+}
+
+.custom-pagination .ant-pagination-options .ant-select-selector {
+  background-color: #2C2C2C !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  height: 32px !important; /* Match pagination button height */
+  min-height: 32px !important;
+  padding: 0 11px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.custom-pagination .ant-pagination-options .ant-select-selection-item {
+  line-height: 30px !important;
+  height: 30px !important;
+}
+
+.custom-pagination .ant-pagination-total-text {
+  color: #ffffff !important;
+}

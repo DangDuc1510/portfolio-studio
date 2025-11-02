@@ -20,11 +20,11 @@ export default function HomepageSectionForm({
   const { data: sections = [], isLoading: isLoadingSections } = useHomepageSections();
   const updateSection = useUpdateHomepageSection();
 
-  const section = sections.find((s) => s.id === sectionId);
+  const section = sections.find((s : HomepageSection) => s._id === sectionId);
   const isLoading = isLoadingSections;
   const isSubmitting = updateSection.isPending;
 
-  const [form, setForm] = useState<Omit<HomepageSection, "id" | "sectionName">>({
+  const [form, setForm] = useState<Omit<HomepageSection, "_id" | "sectionName">>({
     isVisible: true,
     content: {},
   });

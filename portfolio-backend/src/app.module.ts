@@ -8,6 +8,8 @@ import { ProductsModule } from './products/products.module';
 import { AlbumsModule } from './albums/albums.module';
 import { CustomersModule } from './customers/customers.module';
 import { HomepageSectionsModule } from './homepage-sections/homepage-sections.module';
+import { UploadModule } from './upload/upload.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { HomepageSectionsModule } from './homepage-sections/homepage-sections.mo
     AlbumsModule,
     CustomersModule,
     HomepageSectionsModule,
+    UploadModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
