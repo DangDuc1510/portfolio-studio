@@ -3,6 +3,10 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ProductsListing from "@/components/products/ProductsListing";
 
+// Disable static generation for dynamic data
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function ProductsPage({
   searchParams,
 }: {
@@ -13,22 +17,55 @@ export default async function ProductsPage({
   const filters = {
     page,
     limit: 12,
-    ...(resolvedSearchParams.category && { category: resolvedSearchParams.category }),
+    ...(resolvedSearchParams.category && {
+      category: resolvedSearchParams.category,
+    }),
     ...(resolvedSearchParams.search && { search: resolvedSearchParams.search }),
   };
 
-  const [productsData, categories] = await Promise.all([
-    getProducts(filters),
-    getCategories(),
-  ]);
-
-  const products = productsData?.data || [];
-  const pagination = {
-    total: productsData?.total || 0,
-    page: productsData?.page || 1,
-    limit: productsData?.limit || 12,
-    totalPages: productsData?.totalPages || 0,
+  let products = [];
+  let categories = [];
+  let pagination = {
+    total: 0,
+    page: 1,
+    limit: 12,
+    totalPages: 0,
   };
+
+  try {
+    const [productsData, categoriesData] = await Promise.all([
+      getProducts(filters).catch((error) => {
+        console.error("Error fetching products:", error);
+        return {
+          data: [],
+          total: 0,
+          page: 1,
+          limit: 12,
+          totalPages: 0,
+        };
+      }),
+      getCategories().catch((error) => {
+        console.error("Error fetching categories:", error);
+        return [];
+      }),
+    ]);
+
+    products = productsData?.data || [];
+    categories = categoriesData || [];
+    pagination = {
+      total: productsData?.total || 0,
+      page: productsData?.page || 1,
+      limit: productsData?.limit || 12,
+      totalPages: productsData?.totalPages || 0,
+    };
+
+    // Debug logging
+    console.log("Products fetched:", products.length);
+    console.log("Categories fetched:", categories.length);
+  } catch (error) {
+    console.error("Error fetching products data:", error);
+    // Continue with empty data to allow page to render
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1C1C1C] to-[#343434]">
@@ -46,4 +83,3 @@ export default async function ProductsPage({
     </div>
   );
 }
-
