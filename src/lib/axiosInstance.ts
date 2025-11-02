@@ -45,7 +45,7 @@ const getBaseURL = (): string => {
 };
 
 const axiosInstance = axios.create({
-  baseURL: getBaseURL(),
+  baseURL: getBaseURL()==='' ? process.env.VERCEL_URL : getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },
