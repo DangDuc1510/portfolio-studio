@@ -1,97 +1,90 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { getHomepageSections, updateHomepageSection } from '@/lib/api';
+"use client";
+import Link from "next/link";
+import {
+  useHomepageSections,
+  HomepageSection,
+} from "./hooks/useHomepageSections";
+import {
+  EditOutlined,
+  EyeOutlined,
+  EyeInvisibleOutlined,
+} from "@ant-design/icons";
 
-interface HomepageSection {
-  id: string;
-  sectionName: string;
-  isVisible: boolean;
-  content: any;
-}
+export default function HomepageSectionsListPage() {
+  const { data: sections = [], isLoading } = useHomepageSections();
 
-const HomepageSectionManagement = () => {
-  const [sections, setSections] = useState<HomepageSection[]>([]);
-  const [editingSection, setEditingSection] = useState<HomepageSection | null>(null);
-  const [form, setForm] = useState<Omit<HomepageSection, 'id' | 'sectionName'>>({ isVisible: true, content: {} });
-
-  useEffect(() => {
-    fetchSections();
-  }, []); // Loại bỏ `cmsKey` khỏi dependency array
-
-  const fetchSections = async () => {
-    const data = await getHomepageSections(); // Public API, no key needed
-    setSections(data);
-  };
-
-  const handleEdit = async (sectionName: string) => {
-    const section = sections.find(s => s.sectionName === sectionName);
-    if (section) {
-      setEditingSection(section);
-      setForm({ isVisible: section.isVisible, content: section.content });
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingSection) {
-      await updateHomepageSection(editingSection.id, { sectionName: editingSection.sectionName, ...form });
-    }
-    setEditingSection(null);
-    setForm({ isVisible: true, content: {} });
-    fetchSections();
-  };
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-white text-lg">Loading...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-5">
-      <h1 className="text-3xl font-bold mb-4">Homepage Section Management</h1>
+    <div className="text-white">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2 text-white">
+          Homepage Sections
+        </h1>
+        <p className="text-gray-400">
+          Manage your homepage content sections ({sections.length} sections)
+        </p>
+      </div>
 
-      <h2 className="text-2xl font-bold mb-4">Edit Section</h2>
-      {editingSection && (
-        <form onSubmit={handleSubmit} className="space-y-4 mb-8 p-4 border border-gray-200 rounded">
-          <h3 className="text-xl font-semibold">Editing: {editingSection.sectionName}</h3>
-          <label className="flex items-center space-x-2">
-            <span className="font-medium">Visible:</span>
-            <input
-              type="checkbox"
-              checked={form.isVisible}
-              onChange={(e) => setForm({ ...form, isVisible: e.target.checked })}
-              className="form-checkbox h-5 w-5 text-blue-600"
-            />
-          </label>
-          <label className="block">
-            <span className="font-medium">Content (JSON):</span>
-            <textarea
-              value={JSON.stringify(form.content, null, 2)}
-              onChange={(e) => {
-                try {
-                  setForm({ ...form, content: JSON.parse(e.target.value) });
-                } catch (error) {
-                  console.error('Invalid JSON', error);
-                }
-              }}
-              rows={10}
-              cols={50}
-              className="w-full p-2 border border-gray-300 rounded mt-1 font-mono text-sm"
-            />
-          </label>
-          <div className="flex space-x-2">
-            <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Update Section</button>
-            <button type="button" onClick={() => setEditingSection(null)} className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Cancel</button>
-          </div>
-        </form>
+      {sections.length === 0 ? (
+        <div className="bg-gradient-to-br from-[#414141] via-[#303030] to-[#2C2C2C] backdrop-blur-xl rounded-2xl p-12 border border-white/10 text-center">
+          <p className="text-gray-400 text-lg">No sections found</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {sections.map((section: HomepageSection) => (
+            <div
+              key={section.id}
+              className="bg-gradient-to-br from-[#414141] via-[#303030] to-[#2C2C2C] backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    {section.sectionName}
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    {section.isVisible ? (
+                      <>
+                        <EyeOutlined className="text-green-400" />
+                        <span className="text-green-400 text-sm">Visible</span>
+                      </>
+                    ) : (
+                      <>
+                        <EyeInvisibleOutlined className="text-gray-500" />
+                        <span className="text-gray-500 text-sm">Hidden</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <p className="text-gray-400 text-xs mb-2">Content Preview:</p>
+                <div className="bg-[#2C2C2C] border border-white/10 rounded-lg p-3 max-h-24 overflow-y-auto">
+                  <pre className="text-gray-300 text-xs whitespace-pre-wrap">
+                    {JSON.stringify(section.content, null, 2).slice(0, 150)}
+                    {JSON.stringify(section.content, null, 2).length > 150 && "..."}
+                  </pre>
+                </div>
+              </div>
+
+              <Link
+                href={`/studio-manage/cms/homepage-sections/edit/${section.id}`}
+                className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-gradient-to-b from-[#4B4B4B] to-[#41411] hover:from-[#5B5B5B] hover:to-[#4B4B4B] text-white rounded-lg transition-all border border-white/10"
+              >
+                <EditOutlined />
+                <span>Edit Section</span>
+              </Link>
+            </div>
+          ))}
+        </div>
       )}
-
-      <h2 className="text-2xl font-bold mb-4">Existing Sections</h2>
-      <ul className="space-y-2">
-        {sections.map((section) => (
-          <li key={section.id} className="flex items-center justify-between p-2 border border-gray-200 rounded">
-            <span>{section.sectionName} - {section.isVisible ? 'Visible' : 'Hidden'}</span>
-            <button onClick={() => handleEdit(section.sectionName)} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded">Edit</button>
-          </li>
-        ))}
-      </ul>
     </div>
   );
-};
-
-export default HomepageSectionManagement;
+}

@@ -58,7 +58,7 @@ export default function CmsLayout({ children }: { children: React.ReactNode }) {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#343434] to-[#1C1C1C] flex items-center justify-center p-4">
-        <div className="bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 md:p-12 border border-gray-700/50 text-center w-full max-w-md">
+        <div className="bg-gradient-to-br from-[#414141] via-[#303030] to-[#2C2C2C] backdrop-blur-xl rounded-2xl p-8 md:p-12 border border-white/10 text-center w-full max-w-md">
           <div className="mb-6">
             <h1 className="text-3xl font-bold mb-2 text-white">CMS Access</h1>
             <p className="text-gray-400 text-sm">
@@ -121,12 +121,12 @@ export default function CmsLayout({ children }: { children: React.ReactNode }) {
         <aside
           className={`${
             sidebarCollapsed ? "w-20" : "w-80"
-          } bg-gradient-to-br from-[#414141] via-[#303030] to-[#2C2C2C] backdrop-blur-xl border-r border-gray-700/50 transition-all duration-300 flex flex-col `}
+          } bg-gradient-to-br from-[#414141] via-[#303030] to-[#2C2C2C] backdrop-blur-xl  transition-all duration-300 flex flex-col `}
         >
           {/* Logo & Collapse Button */}
           <div
-            className={`p-4 flex items-center border-b border-gray-700/50 ${
-              sidebarCollapsed ? "justify-center" : "justify-between"
+            className={`p-4 pt-8 pb-16 flex items-center ${
+              sidebarCollapsed ? "justify-center" : "ml-6 justify-between"
             }`}
           >
             {!sidebarCollapsed && (
@@ -134,7 +134,7 @@ export default function CmsLayout({ children }: { children: React.ReactNode }) {
             )}
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="w-8 h-8 flex items-center justify-center rounded-lg bg-transparent hover:bg-gradient-to-b hover:from-[#4B4B4B] hover:to-[#41411] text-white transition-colors cursor-pointer border border-white/10"
+              className="w-10 h-10 flex items-center justify-center rounded-lg bg-transparent hover:bg-gradient-to-b hover:from-[#4B4B4B] hover:to-[#41411] text-white transition-colors cursor-pointer border border-white/10"
             >
               <span
                 className={`text-sm ${
@@ -155,7 +155,7 @@ export default function CmsLayout({ children }: { children: React.ReactNode }) {
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-3 ${
-                    !sidebarCollapsed ? "px-8" : "px-[14px]"
+                    !sidebarCollapsed ? "ml-6 px-8" : "px-[14px]"
                   } py-4 rounded-xl transition-all ${
                     item.isActive
                       ? "bg-gradient-to-b from-[#4B4B4B] to-[#41411] text-white"

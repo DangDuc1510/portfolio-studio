@@ -103,10 +103,10 @@ export default function OTPInput({
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
             onPaste={handlePaste}
-            className={`w-14 h-14 text-center text-2xl font-bold rounded-xl border-2 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            className={`w-14 h-14 text-center text-2xl font-bold rounded-xl border-2 transition-all focus:outline-none focus:ring-2 ${
               error
-                ? "border-red-500 bg-red-500/10 text-red-400"
-                : "border-gray-600 bg-gray-800/50 text-white focus:border-blue-500"
+                ? "border-red-500 bg-red-500/10 text-red-400 focus:ring-red-500"
+                : "border-white/10 bg-[#2C2C2C]/80 text-white focus:border-white/30 focus:ring-white/20"
             }`}
           />
         ))}

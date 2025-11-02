@@ -1,102 +1,114 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { getAlbums, getAlbumById, createAlbum, updateAlbum, deleteAlbum } from '@/lib/api';
+"use client";
+import Link from "next/link";
+import {
+  useAlbums,
+  useDeleteAlbum,
+  Album,
+} from "./hooks/useAlbums";
+import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
-interface Album {
-  id: string;
-  name: string;
-  description: string;
-  coverImage: string;
-  productIds: string[];
-}
+export default function AlbumsListPage() {
+  const { data: albums = [], isLoading } = useAlbums();
+  const deleteAlbum = useDeleteAlbum();
 
-const AlbumManagement = () => {
-  const [albums, setAlbums] = useState<Album[]>([]);
-  const [editingAlbum, setEditingAlbum] = useState<Album | null>(null);
-  const [form, setForm] = useState<Omit<Album, 'id'>>({ name: '', description: '', coverImage: '', productIds: [] });
-
-  useEffect(() => {
-    fetchAlbums();
-  }, []);
-
-  const fetchAlbums = async () => {
-    const data = await getAlbums(); // Public API, no key needed
-    setAlbums(data);
-  };
-
-  const handleEdit = async (id: string) => {
-    const album = await getAlbumById(id); // Public API, no key needed
-    setEditingAlbum(album);
-    setForm({ name: album.name, description: album.description, coverImage: album.coverImage, productIds: album.productIds });
-  };
-
-  const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this album?')) {
-      await deleteAlbum(id);
-      fetchAlbums();
+  const handleDelete = async (id: string, name: string) => {
+    if (confirm(`Are you sure you want to delete "${name}"?`)) {
+      try {
+        await deleteAlbum.mutateAsync(id);
+      } catch (error) {
+        console.error("Failed to delete album:", error);
+        alert("Failed to delete album");
+      }
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingAlbum) {
-      await updateAlbum(editingAlbum.id, form);
-    } else {
-      await createAlbum(form);
-    }
-    setEditingAlbum(null);
-    setForm({ name: '', description: '', coverImage: '', productIds: [] });
-    fetchAlbums();
-  };
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-white text-lg">Loading...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-5">
-      <h1 className="text-3xl font-bold mb-4">Album Management</h1>
-      <form onSubmit={handleSubmit} className="space-y-4 mb-8">
-        <input
-          className="w-full p-2 border border-gray-300 rounded"
-          placeholder="Name"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-          required
-        />
-        <textarea
-          className="w-full p-2 border border-gray-300 rounded"
-          placeholder="Description"
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-        />
-        <input
-          className="w-full p-2 border border-gray-300 rounded"
-          placeholder="Cover Image URL"
-          value={form.coverImage}
-          onChange={(e) => setForm({ ...form, coverImage: e.target.value })}
-        />
-        <input
-          className="w-full p-2 border border-gray-300 rounded"
-          placeholder="Product IDs (comma separated)"
-          value={form.productIds.join(',')}
-          onChange={(e) => setForm({ ...form, productIds: e.target.value.split(',') })}
-        />
-        <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          {editingAlbum ? 'Update' : 'Create'} Album
-        </button>
-      </form>
+    <div className="text-white">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold mb-2 text-white">Albums</h1>
+          <p className="text-gray-400">
+            Manage your photo albums ({albums.length} items)
+          </p>
+        </div>
+        <Link
+          href="/studio-manage/cms/albums/create"
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-b from-[#4B4B4B] to-[#41411] hover:from-[#5B5B5B] hover:to-[#4B4B4B] text-white rounded-xl transition-all border border-white/10"
+        >
+          <PlusOutlined />
+          <span>Create Album</span>
+        </Link>
+      </div>
 
-      <h2 className="text-2xl font-bold mb-4">Existing Albums</h2>
-      <ul className="space-y-2">
-        {albums.map((album) => (
-          <li key={album.id} className="flex items-center justify-between p-2 border border-gray-200 rounded">
-            <span>{album.name}</span>
-            <div>
-              <button onClick={() => handleEdit(album.id)} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded mr-2">Edit</button>
-              <button onClick={() => handleDelete(album.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">Delete</button>
+      {albums.length === 0 ? (
+        <div className="bg-gradient-to-br from-[#414141] via-[#303030] to-[#2C2C2C] backdrop-blur-xl rounded-2xl p-12 border border-white/10 text-center">
+          <p className="text-gray-400 text-lg mb-6">No albums found</p>
+          <Link
+            href="/studio-manage/cms/albums/create"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-b from-[#4B4B4B] to-[#41411] hover:from-[#5B5B5B] hover:to-[#4B4B4B] text-white rounded-xl transition-all border border-white/10"
+          >
+            <PlusOutlined />
+            <span>Create Your First Album</span>
+          </Link>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {albums.map((album: Album) => (
+            <div
+              key={album.id}
+              className="bg-gradient-to-br from-[#414141] via-[#303030] to-[#2C2C2C] backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all"
+            >
+              {album.coverImage && (
+                <div className="mb-4 rounded-xl overflow-hidden bg-[#2C2C2C] aspect-video flex items-center justify-center">
+                  <img
+                    src={album.coverImage}
+                    alt={album.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none";
+                    }}
+                  />
+                </div>
+              )}
+              <h3 className="text-xl font-bold text-white mb-2 line-clamp-1">
+                {album.name}
+              </h3>
+              <p className="text-gray-400 text-sm mb-3 line-clamp-2">
+                {album.description || "No description"}
+              </p>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="px-3 py-1 bg-[#2C2C2C] border border-white/10 rounded-lg text-xs text-gray-300">
+                  {album.productIds?.length || 0} products
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <Link
+                  href={`/studio-manage/cms/albums/edit/${album.id}`}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-b from-[#4B4B4B] to-[#41411] hover:from-[#5B5B5B] hover:to-[#4B4B4B] text-white rounded-lg transition-all border border-white/10"
+                >
+                  <EditOutlined />
+                  <span>Edit</span>
+                </Link>
+                <button
+                  onClick={() => handleDelete(album.id, album.name)}
+                  disabled={deleteAlbum.isPending}
+                  className="flex items-center justify-center gap-2 px-4 py-2 bg-transparent hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-lg transition-all border border-red-500/30 hover:border-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <DeleteOutlined />
+                </button>
+              </div>
             </div>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </div>
+      )}
     </div>
   );
-};
-
-export default AlbumManagement;
+}
