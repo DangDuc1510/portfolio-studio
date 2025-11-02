@@ -1,20 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Product } from "@/app/studio-manage/cms/products/hooks/useProducts";
 import {
   ArrowLeftOutlined,
   EyeOutlined,
   ShareAltOutlined,
+  PlayCircleOutlined,
 } from "@ant-design/icons";
-// import ReactPlayer from "react-player";
 
 interface ProductDetailProps {
   product: Product;
   relatedProducts: Product[];
 }
+
+// Helper function to convert YouTube URL to embed URL
+const convertToEmbedUrl = (url: string): string => {
+  if (!url) return "";
+
+  // Check if already embed URL
+  if (url.includes("/embed/")) return url;
+
+  // Extract video ID from various YouTube URL formats
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+    /youtube\.com\/.*[?&]v=([^&\n?#]+)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      return `https://www.youtube.com/embed/${match[1]}`;
+    }
+  }
+
+  // If no pattern matches, return original URL
+  return url;
+};
 
 export default function ProductDetail({
   product,
@@ -26,6 +49,12 @@ export default function ProductDetail({
   const images = product.images || [];
   const mainImage =
     images.length > 0 ? images[selectedImageIndex] : product.thumbnail;
+
+  const isVideo = product.category === "Video" && product.videoUrl;
+  const embedVideoUrl = useMemo(() => {
+    if (!product.videoUrl) return "";
+    return convertToEmbedUrl(product.videoUrl);
+  }, [product.videoUrl]);
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -57,17 +86,20 @@ export default function ProductDetail({
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-        {/* Image Gallery */}
+        {/* Image/Video Gallery */}
         <div className="space-y-4">
-          {/* Main Image/Video */}
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-[#414141] to-[#2C2C2C] border border-white/10">
-            {product.videoUrl ? (
-              <iframe
-                src={product.videoUrl}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+          {/* Main Video/Image */}
+          <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-[#414141] to-[#2C2C2C] border border-white/10">
+            {isVideo && embedVideoUrl ? (
+              <div className="w-full h-full">
+                <iframe
+                  src={embedVideoUrl}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title={product.name}
+                />
+              </div>
             ) : mainImage ? (
               <img
                 src={mainImage}
@@ -76,14 +108,23 @@ export default function ProductDetail({
                 onClick={() => setIsLightboxOpen(true)}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <span className="text-gray-400">No Image</span>
+              <div className="w-full h-full flex flex-col items-center justify-center">
+                {product.thumbnail && (
+                  <img
+                    src={product.thumbnail}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                )}
+                {!product.thumbnail && (
+                  <span className="text-gray-400">No Image</span>
+                )}
               </div>
             )}
           </div>
 
-          {/* Thumbnail Strip */}
-          {images.length > 1 && (
+          {/* Thumbnail Strip - Only show if not video and has multiple images */}
+          {!isVideo && images.length > 1 && (
             <div className="grid grid-cols-4 gap-4">
               {images.map((image, index) => (
                 <button
@@ -104,6 +145,22 @@ export default function ProductDetail({
               ))}
             </div>
           )}
+
+          {/* Video Thumbnail Preview - If video but has thumbnail */}
+          {/* {isVideo && product.thumbnail && (
+            <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-[#414141] to-[#2C2C2C] border border-white/10">
+              <img
+                src={product.thumbnail}
+                alt={`${product.name} thumbnail`}
+                className="w-full h-full object-cover opacity-50"
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="bg-black/50 rounded-full p-4">
+                  <PlayCircleOutlined className="text-white text-4xl" />
+                </div>
+              </div>
+            </div>
+          )} */}
         </div>
 
         {/* Product Info */}
@@ -134,6 +191,24 @@ export default function ProductDetail({
               </p>
             </div>
           )}
+
+          {/* Video Info */}
+          {/* {isVideo && product.videoUrl && (
+            <div className="p-4 bg-[#2C2C2C]/50 rounded-xl border border-white/10">
+              <div className="flex items-center gap-2 mb-2">
+                <PlayCircleOutlined className="text-[#FFDD00] text-lg" />
+                <span className="text-white font-semibold">Video Content</span>
+              </div>
+              <a
+                href={product.videoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-[#FFDD00] transition-colors text-sm break-all"
+              >
+                {product.videoUrl}
+              </a>
+            </div>
+          )} */}
 
           {/* Share Button */}
           <div>
@@ -209,4 +284,3 @@ export default function ProductDetail({
     </div>
   );
 }
-

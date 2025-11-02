@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Category, CategoryDocument } from './schemas/category.schema';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -10,6 +10,18 @@ export class CategoriesService {
   constructor(
     @InjectModel(Category.name) private categoryModel: Model<CategoryDocument>,
   ) {}
+
+  // Helper method to validate ObjectId
+  private isValidObjectId(id: string): boolean {
+    return Types.ObjectId.isValid(id);
+  }
+
+  // Helper method to validate and throw if invalid
+  private validateObjectId(id: string, entityName: string = 'Resource'): void {
+    if (!this.isValidObjectId(id)) {
+      throw new BadRequestException(`Invalid ${entityName} ID: ${id}`);
+    }
+  }
 
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
     const categoryData = {
@@ -25,6 +37,7 @@ export class CategoriesService {
   }
 
   async findOne(id: string): Promise<Category | null> {
+    this.validateObjectId(id, 'Category');
     return this.categoryModel.findById(id).exec();
   }
 
@@ -32,6 +45,7 @@ export class CategoriesService {
     id: string,
     updateCategoryDto: UpdateCategoryDto,
   ): Promise<Category | null> {
+    this.validateObjectId(id, 'Category');
     const updateData = {
       ...updateCategoryDto,
       updatedAt: new Date(),
@@ -42,6 +56,7 @@ export class CategoriesService {
   }
 
   async remove(id: string): Promise<Category | null> {
+    this.validateObjectId(id, 'Category');
     const category = await this.categoryModel.findById(id).exec();
     
     // Prevent deletion of "Video" category

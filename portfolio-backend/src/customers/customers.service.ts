@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Customer, CustomerDocument } from './schemas/customer.schema';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
@@ -8,6 +8,18 @@ import { UpdateCustomerDto } from './dto/update-customer.dto';
 @Injectable()
 export class CustomersService {
   constructor(@InjectModel(Customer.name) private customerModel: Model<CustomerDocument>) {}
+
+  // Helper method to validate ObjectId
+  private isValidObjectId(id: string): boolean {
+    return Types.ObjectId.isValid(id);
+  }
+
+  // Helper method to validate and throw if invalid
+  private validateObjectId(id: string, entityName: string = 'Resource'): void {
+    if (!this.isValidObjectId(id)) {
+      throw new BadRequestException(`Invalid ${entityName} ID: ${id}`);
+    }
+  }
 
   async create(createCustomerDto: CreateCustomerDto): Promise<Customer> {
     // Check if email already exists to determine service count
@@ -20,6 +32,7 @@ export class CustomersService {
   }
 
   async findOne(id: string): Promise<Customer | null> {
+    this.validateObjectId(id, 'Customer');
     return this.customerModel.findById(id).exec();
   }
 
@@ -140,10 +153,12 @@ export class CustomersService {
   }
 
   async update(id: string, updateCustomerDto: UpdateCustomerDto): Promise<Customer | null> {
+    this.validateObjectId(id, 'Customer');
     return this.customerModel.findByIdAndUpdate(id, updateCustomerDto, { new: true }).exec();
   }
 
   async remove(id: string): Promise<Customer | null> {
+    this.validateObjectId(id, 'Customer');
     return this.customerModel.findByIdAndDelete(id).exec();
   }
 }

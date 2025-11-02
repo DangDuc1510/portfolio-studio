@@ -1,4 +1,4 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, Inject, forwardRef, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Product, ProductDocument } from './schemas/product.schema';
@@ -17,7 +17,24 @@ export class ProductsService {
     private albumsService: AlbumsService,
   ) {}
 
+  // Helper method to validate ObjectId
+  private isValidObjectId(id: string): boolean {
+    return Types.ObjectId.isValid(id);
+  }
+
+  // Helper method to validate and throw if invalid
+  private validateObjectId(id: string, entityName: string = 'Resource'): void {
+    if (!this.isValidObjectId(id)) {
+      throw new BadRequestException(`Invalid ${entityName} ID: ${id}`);
+    }
+  }
+
   async create(createProductDto: CreateProductDto): Promise<Product> {
+    // Validate albumId if provided
+    if (createProductDto.albumId && !this.isValidObjectId(createProductDto.albumId)) {
+      throw new BadRequestException(`Invalid Album ID: ${createProductDto.albumId}`);
+    }
+
     const productData = {
       ...createProductDto,
       ...(createProductDto.albumId && {
@@ -63,6 +80,9 @@ export class ProductsService {
 
     // Filter by albumId - convert to ObjectId
     if (filters?.albumId) {
+      if (!this.isValidObjectId(filters.albumId)) {
+        throw new BadRequestException(`Invalid Album ID: ${filters.albumId}`);
+      }
       query.albumId = new Types.ObjectId(filters.albumId);
     }
 
@@ -90,10 +110,12 @@ export class ProductsService {
   }
 
   async findOne(id: string): Promise<Product | null> {
+    this.validateObjectId(id, 'Product');
     return this.productModel.findById(id).exec();
   }
 
   async update(id: string, updateProductDto: UpdateProductDto): Promise<Product | null> {
+    this.validateObjectId(id, 'Product');
     // Get old product to check old albumId
     const oldProduct = await this.productModel.findById(id).exec();
     
@@ -110,6 +132,10 @@ export class ProductsService {
         updateData.albumId = null;
         newAlbumId = null;
       } else {
+        // Validate albumId if provided
+        if (!this.isValidObjectId(updateProductDto.albumId)) {
+          throw new BadRequestException(`Invalid Album ID: ${updateProductDto.albumId}`);
+        }
         updateData.albumId = new Types.ObjectId(updateProductDto.albumId);
         newAlbumId = updateProductDto.albumId;
       }
@@ -135,6 +161,7 @@ export class ProductsService {
   }
 
   async remove(id: string): Promise<Product | null> {
+    this.validateObjectId(id, 'Product');
     // Get product before deleting to sync album
     const product = await this.productModel.findById(id).exec();
     
@@ -150,6 +177,7 @@ export class ProductsService {
 
   // Helper method to sync productIds in album
   private async syncAlbumProductIds(albumId: string): Promise<void> {
+    this.validateObjectId(albumId, 'Album');
     // Find all products with this albumId
     const products = await this.productModel.find({ albumId: new Types.ObjectId(albumId) }).exec();
     
