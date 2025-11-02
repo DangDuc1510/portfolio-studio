@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { getProducts, getCategories } from "@/lib/api";
@@ -7,7 +8,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ProductsListing from "@/components/products/ProductsListing";
 
-export default function ProductsPage() {
+function ProductsContent() {
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1", 10);
   const category = searchParams.get("category") || undefined;
@@ -43,23 +44,39 @@ export default function ProductsPage() {
 
   const isLoading = isLoadingProducts || isLoadingCategories;
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-white text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  return (
+    <ProductsListing
+      products={products}
+      categories={categoriesData}
+      pagination={pagination}
+      currentCategory={category}
+      currentSearch={search}
+    />
+  );
+}
+
+export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1C1C1C] to-[#343434]">
       <Header />
       <main className="pt-20">
-        {isLoading ? (
-          <div className="min-h-screen flex items-center justify-center">
-            <div className="text-white text-lg">Loading...</div>
-          </div>
-        ) : (
-          <ProductsListing
-            products={products}
-            categories={categoriesData}
-            pagination={pagination}
-            currentCategory={category}
-            currentSearch={search}
-          />
-        )}
+        <Suspense
+          fallback={
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="text-white text-lg">Loading...</div>
+            </div>
+          }
+        >
+          <ProductsContent />
+        </Suspense>
       </main>
       <Footer />
     </div>
