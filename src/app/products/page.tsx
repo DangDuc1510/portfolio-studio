@@ -1,83 +1,65 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 import { getProducts, getCategories } from "@/lib/api";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ProductsListing from "@/components/products/ProductsListing";
 
-// Disable static generation for dynamic data
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export default function ProductsPage() {
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const category = searchParams.get("category") || undefined;
+  const search = searchParams.get("search") || undefined;
 
-export default async function ProductsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ category?: string; search?: string; page?: string }>;
-}) {
-  const resolvedSearchParams = await searchParams;
-  const page = parseInt(resolvedSearchParams.page || "1", 10);
   const filters = {
     page,
     limit: 12,
-    ...(resolvedSearchParams.category && {
-      category: resolvedSearchParams.category,
-    }),
-    ...(resolvedSearchParams.search && { search: resolvedSearchParams.search }),
+    ...(category && { category }),
+    ...(search && { search }),
   };
 
-  let products = [];
-  let categories = [];
-  let pagination = {
-    total: 0,
-    page: 1,
-    limit: 12,
-    totalPages: 0,
+  // Fetch products using React Query
+  const { data: productsData, isLoading: isLoadingProducts } = useQuery({
+    queryKey: ["products", filters],
+    queryFn: () => getProducts(filters),
+  });
+
+  // Fetch categories using React Query
+  const { data: categories, isLoading: isLoadingCategories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => getCategories(),
+  });
+
+  const products = productsData?.data || [];
+  const categoriesData = categories || [];
+  const pagination = {
+    total: productsData?.total || 0,
+    page: productsData?.page || 1,
+    limit: productsData?.limit || 12,
+    totalPages: productsData?.totalPages || 0,
   };
 
-  try {
-    const [productsData, categoriesData] = await Promise.all([
-      getProducts(filters).catch((error) => {
-        console.error("Error fetching products:", error);
-        return {
-          data: [],
-          total: 0,
-          page: 1,
-          limit: 12,
-          totalPages: 0,
-        };
-      }),
-      getCategories().catch((error) => {
-        console.error("Error fetching categories:", error);
-        return [];
-      }),
-    ]);
-
-    products = productsData?.data || [];
-    categories = categoriesData || [];
-    pagination = {
-      total: productsData?.total || 0,
-      page: productsData?.page || 1,
-      limit: productsData?.limit || 12,
-      totalPages: productsData?.totalPages || 0,
-    };
-
-    // Debug logging
-    console.log("Products fetched:", products.length);
-    console.log("Categories fetched:", categories.length);
-  } catch (error) {
-    console.error("Error fetching products data:", error);
-    // Continue with empty data to allow page to render
-  }
+  const isLoading = isLoadingProducts || isLoadingCategories;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1C1C1C] to-[#343434]">
       <Header />
       <main className="pt-20">
-        <ProductsListing
-          products={products}
-          categories={categories}
-          pagination={pagination}
-          currentCategory={resolvedSearchParams.category}
-          currentSearch={resolvedSearchParams.search}
-        />
+        {isLoading ? (
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="text-white text-lg">Loading...</div>
+          </div>
+        ) : (
+          <ProductsListing
+            products={products}
+            categories={categoriesData}
+            pagination={pagination}
+            currentCategory={category}
+            currentSearch={search}
+          />
+        )}
       </main>
       <Footer />
     </div>
