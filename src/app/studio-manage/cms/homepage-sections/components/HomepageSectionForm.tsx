@@ -8,7 +8,6 @@ import {
   HomepageSection,
 } from "../hooks/useHomepageSections";
 import ImageUpload from "@/components/ImageUpload";
-import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 
 interface HomepageSectionFormProps {
   sectionId: string;
@@ -50,7 +49,7 @@ export default function HomepageSectionForm({
     }
   }, [section]);
 
-  const updateContent = (key: string, value: any) => {
+  const updateContent = (key: string, value: unknown) => {
     setForm((prev) => ({
       ...prev,
       content: {
@@ -69,7 +68,7 @@ export default function HomepageSectionForm({
       const parsed = JSON.parse(value);
       setForm((prev) => ({ ...prev, content: parsed }));
       setJsonError("");
-    } catch (error) {
+    } catch {
       setJsonError("Invalid JSON format");
     }
   };
@@ -92,10 +91,17 @@ export default function HomepageSectionForm({
       } else {
         router.push("/studio-manage/cms/homepage-sections");
       }
-    } catch (error) {
-      console.error("Failed to save section:", error);
+    } catch {
       alert("Failed to save section");
     }
+  };
+
+  const getStringValue = (value: unknown): string => {
+    return typeof value === 'string' ? value : '';
+  };
+
+  const getStringOrUndefined = (value: unknown): string | undefined => {
+    return typeof value === 'string' ? value : undefined;
   };
 
   const renderFormFields = () => {
@@ -113,7 +119,7 @@ export default function HomepageSectionForm({
                 Title
               </label>
               <Input
-                value={content.title || ""}
+                value={getStringValue(content.title)}
                 onChange={(e) => updateContent("title", e.target.value)}
                 placeholder="Hero Title"
                 className="bg-[#2C2C2C]/80 border-white/10 text-white"
@@ -124,7 +130,7 @@ export default function HomepageSectionForm({
                 Subtitle
               </label>
               <Input.TextArea
-                value={content.subtitle || ""}
+                value={getStringValue(content.subtitle)}
                 onChange={(e) => updateContent("subtitle", e.target.value)}
                 placeholder="Hero Subtitle"
                 rows={3}
@@ -136,7 +142,7 @@ export default function HomepageSectionForm({
                 Background Image
               </label>
               <ImageUpload
-                value={content.backgroundImage}
+                value={getStringOrUndefined(content.backgroundImage)}
                 onChange={(url) => updateContent("backgroundImage", url)}
                 label="Upload Background Image"
               />
@@ -146,7 +152,7 @@ export default function HomepageSectionForm({
                 Background Video URL (Optional)
               </label>
               <Input
-                value={content.videoUrl || ""}
+                value={getStringValue(content.videoUrl)}
                 onChange={(e) => updateContent("videoUrl", e.target.value)}
                 placeholder="https://youtube.com/watch?v=... or video file URL"
                 className="bg-[#2C2C2C]/80 border-white/10 text-white"
@@ -158,7 +164,7 @@ export default function HomepageSectionForm({
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <Input
-                  value={content.primaryButtonText || ""}
+                  value={getStringValue(content.primaryButtonText)}
                   onChange={(e) =>
                     updateContent("primaryButtonText", e.target.value)
                   }
@@ -166,7 +172,7 @@ export default function HomepageSectionForm({
                   className="bg-[#2C2C2C]/80 border-white/10 text-white"
                 />
                 <Input
-                  value={content.primaryButtonLink || ""}
+                  value={getStringValue(content.primaryButtonLink)}
                   onChange={(e) =>
                     updateContent("primaryButtonLink", e.target.value)
                   }
@@ -181,7 +187,7 @@ export default function HomepageSectionForm({
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <Input
-                  value={content.secondaryButtonText || ""}
+                  value={getStringValue(content.secondaryButtonText)}
                   onChange={(e) =>
                     updateContent("secondaryButtonText", e.target.value)
                   }
@@ -189,7 +195,7 @@ export default function HomepageSectionForm({
                   className="bg-[#2C2C2C]/80 border-white/10 text-white"
                 />
                 <Input
-                  value={content.secondaryButtonLink || ""}
+                  value={getStringValue(content.secondaryButtonLink)}
                   onChange={(e) =>
                     updateContent("secondaryButtonLink", e.target.value)
                   }
@@ -209,7 +215,7 @@ export default function HomepageSectionForm({
                 Title
               </label>
               <Input
-                value={content.title || ""}
+                value={getStringValue(content.title)}
                 onChange={(e) => updateContent("title", e.target.value)}
                 placeholder="About Section Title"
                 className="bg-[#2C2C2C]/80 border-white/10 text-white"
@@ -220,7 +226,7 @@ export default function HomepageSectionForm({
                 Description
               </label>
               <Input.TextArea
-                value={content.description || ""}
+                value={getStringValue(content.description)}
                 onChange={(e) => updateContent("description", e.target.value)}
                 placeholder="About description"
                 rows={6}
@@ -232,7 +238,7 @@ export default function HomepageSectionForm({
                 Image
               </label>
               <ImageUpload
-                value={content.image}
+                value={getStringOrUndefined(content.image)}
                 onChange={(url) => updateContent("image", url)}
                 label="Upload About Image"
               />
@@ -251,16 +257,16 @@ export default function HomepageSectionForm({
                   try {
                     const parsed = JSON.parse(e.target.value);
                     updateContent("stats", parsed);
-                  } catch (error) {
+                  } catch {
                     // Invalid JSON, keep as is
                   }
                 }}
-                placeholder='[{"label": "Years", "value": "10+"}, {"label": "Projects", "value": "500+"}]'
+                placeholder='[{&quot;label&quot;: &quot;Years&quot;, &quot;value&quot;: &quot;10+&quot;}, {&quot;label&quot;: &quot;Projects&quot;, &quot;value&quot;: &quot;500+&quot;}]'
                 rows={4}
                 className="bg-[#2C2C2C]/80 border-white/10 text-white font-mono text-sm"
               />
               <p className="text-gray-400 text-xs mt-2">
-                Array of stats objects with "label" and "value"
+                Array of stats objects with &quot;label&quot; and &quot;value&quot;
               </p>
             </div>
           </div>
@@ -274,7 +280,7 @@ export default function HomepageSectionForm({
                 Section Title
               </label>
               <Input
-                value={content.title || ""}
+                value={getStringValue(content.title)}
                 onChange={(e) => updateContent("title", e.target.value)}
                 placeholder="Services Section Title"
                 className="bg-[#2C2C2C]/80 border-white/10 text-white"
@@ -285,7 +291,7 @@ export default function HomepageSectionForm({
                 Section Subtitle
               </label>
               <Input.TextArea
-                value={content.subtitle || ""}
+                value={getStringValue(content.subtitle)}
                 onChange={(e) => updateContent("subtitle", e.target.value)}
                 placeholder="Section subtitle or description"
                 rows={2}
@@ -306,16 +312,16 @@ export default function HomepageSectionForm({
                   try {
                     const parsed = JSON.parse(e.target.value);
                     updateContent("services", parsed);
-                  } catch (error) {
+                  } catch {
                     // Invalid JSON
                   }
                 }}
-                placeholder='[{"icon": "CameraOutlined", "title": "Photography", "description": "Professional photography services"}, ...]'
+                placeholder='[{&quot;icon&quot;: &quot;CameraOutlined&quot;, &quot;title&quot;: &quot;Photography&quot;, &quot;description&quot;: &quot;Professional photography services&quot;}, ...]'
                 rows={8}
                 className="bg-[#2C2C2C]/80 border-white/10 text-white font-mono text-sm"
               />
               <p className="text-gray-400 text-xs mt-2">
-                Array of service objects with "icon", "title", and "description"
+                Array of service objects with &quot;icon&quot;, &quot;title&quot;, and &quot;description&quot;
               </p>
             </div>
           </div>
@@ -329,7 +335,7 @@ export default function HomepageSectionForm({
                 Section Title
               </label>
               <Input
-                value={content.title || ""}
+                value={getStringValue(content.title)}
                 onChange={(e) => updateContent("title", e.target.value)}
                 placeholder="Testimonials Section Title"
                 className="bg-[#2C2C2C]/80 border-white/10 text-white"
@@ -349,11 +355,11 @@ export default function HomepageSectionForm({
                   try {
                     const parsed = JSON.parse(e.target.value);
                     updateContent("testimonials", parsed);
-                  } catch (error) {
+                  } catch {
                     // Invalid JSON
                   }
                 }}
-                placeholder='[{"name": "Customer Name", "message": "Great service!", "rating": 5}, ...]'
+                placeholder='[{&quot;name&quot;: &quot;Customer Name&quot;, &quot;message&quot;: &quot;Great service!&quot;, &quot;rating&quot;: 5}, ...]'
                 rows={8}
                 className="bg-[#2C2C2C]/80 border-white/10 text-white font-mono text-sm"
               />
@@ -373,7 +379,7 @@ export default function HomepageSectionForm({
                 Title
               </label>
               <Input
-                value={content.title || ""}
+                value={getStringValue(content.title)}
                 onChange={(e) => updateContent("title", e.target.value)}
                 placeholder="Section Title"
                 className="bg-[#2C2C2C]/80 border-white/10 text-white"
@@ -384,7 +390,7 @@ export default function HomepageSectionForm({
                 Content
               </label>
               <Input.TextArea
-                value={content.description || content.content || ""}
+                value={getStringValue(content.description) || getStringValue(content.content)}
                 onChange={(e) => {
                   const value = e.target.value;
                   updateContent("description", value);
@@ -481,7 +487,7 @@ export default function HomepageSectionForm({
                 ? "border-red-500/50 focus:border-red-500/70 focus:ring-red-500/20"
                 : "border-white/10 focus:border-white/30 focus:ring-white/20"
             }`}
-            placeholder='{"title": "Example", "description": "Content here"}'
+            placeholder='{&quot;title&quot;: &quot;Example&quot;, &quot;description&quot;: &quot;Content here&quot;}'
           />
           {jsonError && (
             <p className="text-red-400 text-xs mt-2">{jsonError}</p>

@@ -91,27 +91,13 @@ export default function CustomersListPage() {
     { label: "Đã hủy", value: "cancelled", color: "text-red-400" },
   ];
 
-  const getStatusLabel = (status?: string) => {
-    const option = statusOptions.find(
-      (opt) => opt.value === (status || "pending")
-    );
-    return option?.label || "Chờ phản hồi";
-  };
-
-  const getStatusColor = (status?: string) => {
-    const option = statusOptions.find(
-      (opt) => opt.value === (status || "pending")
-    );
-    return option?.color || "text-yellow-400";
-  };
-
   const handleStatusChange = async (
     customerId: string,
     newStatus: string,
     note?: string
   ) => {
     try {
-      const updateData: any = { status: newStatus as any };
+      const updateData: Record<string, unknown> = { status: newStatus };
       if (newStatus === "completed" && note !== undefined) {
         updateData.note = note;
       }

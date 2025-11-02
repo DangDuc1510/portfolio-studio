@@ -21,9 +21,13 @@ export default function CategoriesListPage() {
     if (confirm(`Are you sure you want to delete category "${name}"?`)) {
       try {
         await deleteCategory.mutateAsync(id);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Failed to delete category:", error);
-        const errorMessage = error?.response?.data?.message || error?.message || "Failed to delete category";
+        let errorMessage = "Failed to delete category";
+        if (error && typeof error === 'object') {
+          const err = error as { response?: { data?: { message?: string } }; message?: string };
+          errorMessage = err.response?.data?.message || err.message || errorMessage;
+        }
         alert(errorMessage);
       }
     }

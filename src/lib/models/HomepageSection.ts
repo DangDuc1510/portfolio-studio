@@ -3,7 +3,7 @@ import mongoose, { Schema, Model, Document } from 'mongoose';
 export interface IHomepageSection extends Document {
   sectionName: string;
   isVisible?: boolean;
-  content?: Record<string, any>;
+  content?: Record<string, unknown>;
   createdAt?: Date;
   updatedAt?: Date;
 }

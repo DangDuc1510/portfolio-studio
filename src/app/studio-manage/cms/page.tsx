@@ -34,15 +34,6 @@ const COLORS = {
   cancelled: "#FF4D4F",
 };
 
-const CHART_COLORS = [
-  "#FFDD00",
-  "#1890FF",
-  "#52C41A",
-  "#722ED1",
-  "#FF7A45",
-  "#13C2C2",
-];
-
 export default function CmsDashboard() {
   const { data: stats, isLoading } = useQuery({
     queryKey: ["dashboard-stats"],
@@ -155,15 +146,15 @@ export default function CmsDashboard() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={(entry: any) => {
-                    const percent =
-                      (entry.value /
-                        customerStatusData.reduce(
-                          (sum, item) => sum + item.value,
-                          0
-                        )) *
-                      100;
-                    return `${entry.name}: ${percent.toFixed(0)}%`;
+                  label={(props: unknown) => {
+                    const p = props as {
+                      payload?: { name: string; value: number };
+                      percent?: number;
+                    };
+                    if (!p.payload || p.percent === undefined) return "";
+                    return `${p.payload.name}: ${(p.percent * 100).toFixed(
+                      0
+                    )}%`;
                   }}
                   outerRadius={100}
                   fill="#8884d8"

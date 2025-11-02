@@ -9,9 +9,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const createdCustomer = await new Customer(body).save();
     return NextResponse.json(createdCustomer, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

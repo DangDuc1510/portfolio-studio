@@ -8,7 +8,7 @@ export interface HomepageSection {
   _id: string;
   sectionName: string;
   isVisible: boolean;
-  content: any;
+  content: Record<string, unknown>;
 }
 
 // Query keys

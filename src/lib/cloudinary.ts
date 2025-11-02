@@ -11,7 +11,7 @@ export function extractPublicIdFromUrl(url: string): string | null {
     const regex = /\/v\d+\/(.+)\.(jpg|jpeg|png|gif|webp)/i;
     const match = url.match(regex);
     return match ? match[1] : null;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

@@ -5,9 +5,7 @@ import Link from "next/link";
 import { Product } from "@/app/studio-manage/cms/products/hooks/useProducts";
 import {
   ArrowLeftOutlined,
-  EyeOutlined,
   ShareAltOutlined,
-  PlayCircleOutlined,
 } from "@ant-design/icons";
 
 interface ProductDetailProps {
@@ -64,7 +62,7 @@ export default function ProductDetail({
           text: product.description,
           url: window.location.href,
         });
-      } catch (error) {
+      } catch {
         // User cancelled or error occurred
       }
     } else {

@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
       const dataUri = `data:${file.type};base64,${base64String}`;
 
       // Simplified upload options to avoid signature issues
-      const uploadOptions: any = {
+      const uploadOptions: Record<string, unknown> = {
         resource_type: 'image',
         folder: 'portfolio-studio',
         allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
@@ -84,11 +84,15 @@ export async function POST(request: NextRequest) {
           format: result.format,
         },
       });
-    } catch (uploadError: any) {
+    } catch (uploadError: unknown) {
+      const errorMessage = uploadError instanceof Error ? uploadError.message : 'Unknown error';
+      const httpCode = (uploadError as { http_code?: number })?.http_code;
+      const errorName = uploadError instanceof Error ? uploadError.name : 'Unknown';
+      
       console.error('Cloudinary upload error:', {
-        message: uploadError.message,
-        http_code: uploadError.http_code,
-        name: uploadError.name,
+        message: errorMessage,
+        http_code: httpCode,
+        name: errorName,
         hasCloudName: !!process.env.CLOUDINARY_CLOUD_NAME,
         hasApiKey: !!process.env.CLOUDINARY_API_KEY,
         hasApiSecret: !!process.env.CLOUDINARY_API_SECRET,
@@ -97,12 +101,12 @@ export async function POST(request: NextRequest) {
       });
 
       // Handle specific Cloudinary error codes
-      if (uploadError.http_code === 401) {
-        const isInvalidSignature = uploadError.message?.includes('Invalid Signature');
+      if (httpCode === 401) {
+        const isInvalidSignature = errorMessage.includes('Invalid Signature');
         return NextResponse.json(
           { 
             error: 'Authentication failed. Please check your Cloudinary credentials.',
-            details: uploadError.message,
+            details: errorMessage,
             hint: isInvalidSignature 
               ? 'Invalid Signature error usually indicates incorrect CLOUDINARY_API_SECRET. Please verify your API secret in the Cloudinary dashboard.'
               : 'Please verify CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET in your environment variables.'
@@ -111,11 +115,11 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      if (uploadError.http_code === 400) {
+      if (httpCode === 400) {
         return NextResponse.json(
           { 
             error: 'Invalid upload request',
-            details: uploadError.message 
+            details: errorMessage 
           },
           { status: 400 }
         );
@@ -124,17 +128,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { 
           error: 'Upload failed',
-          details: uploadError.message || 'Unknown error occurred'
+          details: errorMessage || 'Unknown error occurred'
         },
-        { status: uploadError.http_code || 500 }
+        { status: httpCode || 500 }
       );
     }
-  } catch (error: any) {
-    if (error.message?.includes('Unauthorized')) {
-      return NextResponse.json({ error: error.message }, { status: 401 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
+    if (errorMessage.includes('Unauthorized')) {
+      return NextResponse.json({ error: errorMessage }, { status: 401 });
     }
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
@@ -179,12 +184,13 @@ export async function DELETE(request: NextRequest) {
           : 'File not found or could not be deleted',
       result: result.result,
     });
-  } catch (error: any) {
-    if (error.message?.includes('Unauthorized')) {
-      return NextResponse.json({ error: error.message }, { status: 401 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
+    if (errorMessage.includes('Unauthorized')) {
+      return NextResponse.json({ error: errorMessage }, { status: 401 });
     }
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

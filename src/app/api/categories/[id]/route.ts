@@ -30,9 +30,10 @@ export async function GET(
     }
     
     return NextResponse.json(category);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
@@ -60,12 +61,13 @@ export async function PATCH(
     }
     
     return NextResponse.json(updatedCategory);
-  } catch (error: any) {
-    if (error.message?.includes('Unauthorized')) {
-      return NextResponse.json({ error: error.message }, { status: 401 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
+    if (errorMessage.includes('Unauthorized')) {
+      return NextResponse.json({ error: errorMessage }, { status: 401 });
     }
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
@@ -105,12 +107,13 @@ export async function DELETE(
     }
     
     return NextResponse.json(deletedCategory);
-  } catch (error: any) {
-    if (error.message?.includes('Unauthorized')) {
-      return NextResponse.json({ error: error.message }, { status: 401 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
+    if (errorMessage.includes('Unauthorized')) {
+      return NextResponse.json({ error: errorMessage }, { status: 401 });
     }
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

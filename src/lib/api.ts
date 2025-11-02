@@ -11,12 +11,12 @@ export const getAlbumById = async (id: string) => {
   return response.data;
 };
 
-export const createAlbum = async (albumData: any) => {
+export const createAlbum = async (albumData: Record<string, unknown>) => {
   const response = await axiosInstance.post('/api/albums', albumData);
   return response.data;
 };
 
-export const updateAlbum = async (id: string, albumData: any) => {
+export const updateAlbum = async (id: string, albumData: Record<string, unknown>) => {
   const response = await axiosInstance.patch(`/api/albums/${id}`, albumData);
   return response.data;
 };
@@ -59,12 +59,12 @@ export const getCustomerById = async (id: string) => {
   return response.data;
 };
 
-export const createCustomer = async (customerData: any) => {
+export const createCustomer = async (customerData: Record<string, unknown>) => {
   const response = await axiosInstance.post('/api/customers', customerData);
   return response.data;
 };
 
-export const updateCustomerById = async (id: string, data: any) => {
+export const updateCustomerById = async (id: string, data: Record<string, unknown>) => {
   const apiKey = process.env.NEXT_PUBLIC_CMS_API_KEY;
   const response = await axiosInstance.patch(`/api/customers/${id}`, data, {
     headers: {
@@ -114,12 +114,12 @@ export const getProductCategories = async () => {
   return response.data;
 };
 
-export const createProduct = async (productData: any) => {
+export const createProduct = async (productData: Record<string, unknown>) => {
   const response = await axiosInstance.post('/api/products', productData);
   return response.data;
 };
 
-export const updateProductById = async (id: string, productData: any) => {
+export const updateProductById = async (id: string, productData: Record<string, unknown>) => {
   const response = await axiosInstance.patch(`/api/products/${id}`, productData);
   return response.data;
 };
@@ -135,7 +135,7 @@ export const getHomepageSections = async () => {
   return response.data;
 };
 
-export const updateHomepageSection = async (id: string, sectionData: any) => {
+export const updateHomepageSection = async (id: string, sectionData: Record<string, unknown>) => {
   const apiKey = process.env.NEXT_PUBLIC_CMS_API_KEY;
   const response = await axiosInstance.patch(`/api/homepage-sections/${id}`, sectionData, {
     headers: {
@@ -189,7 +189,7 @@ export const getCategoryById = async (id: string) => {
   return response.data;
 };
 
-export const createCategory = async (categoryData: any) => {
+export const createCategory = async (categoryData: Record<string, unknown>) => {
   const apiKey = process.env.NEXT_PUBLIC_CMS_API_KEY;
   const response = await axiosInstance.post('/api/categories', categoryData, {
     headers: {
@@ -199,7 +199,7 @@ export const createCategory = async (categoryData: any) => {
   return response.data;
 };
 
-export const updateCategory = async (id: string, categoryData: any) => {
+export const updateCategory = async (id: string, categoryData: Record<string, unknown>) => {
   const apiKey = process.env.NEXT_PUBLIC_CMS_API_KEY;
   const response = await axiosInstance.patch(`/api/categories/${id}`, categoryData, {
     headers: {

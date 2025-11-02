@@ -13,6 +13,14 @@ import {
 export default function HomepageSectionsListPage() {
   const { data: sections = [], isLoading } = useHomepageSections();
 
+  const getStringValue = (value: unknown): string => {
+    return typeof value === "string" ? value : "";
+  };
+
+  const hasStringValue = (value: unknown): boolean => {
+    return typeof value === "string" && value.length > 0;
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -67,29 +75,31 @@ export default function HomepageSectionsListPage() {
               <div className="mb-4">
                 <p className="text-gray-400 text-xs mb-2">Content Preview:</p>
                 <div className="bg-[#2C2C2C] border border-white/10 rounded-lg p-3 max-h-32 overflow-y-auto">
-                  {section.content?.title ? (
+                  {hasStringValue(section.content?.title) ? (
                     <div className="space-y-1">
                       <p className="text-white text-sm font-medium">
-                        {section.content.title}
+                        {getStringValue(section.content.title)}
                       </p>
-                      {section.content.subtitle && (
+                      {hasStringValue(section.content.subtitle) && (
                         <p className="text-gray-300 text-xs line-clamp-2">
-                          {section.content.subtitle}
+                          {getStringValue(section.content.subtitle)}
                         </p>
                       )}
-                      {section.content.description && (
+                      {hasStringValue(section.content.description) && (
                         <p className="text-gray-300 text-xs line-clamp-2">
-                          {section.content.description}
+                          {getStringValue(section.content.description)}
                         </p>
                       )}
-                      {(section.content.backgroundImage ||
-                        section.content.image) && (
+                      {(hasStringValue(section.content.backgroundImage) ||
+                        hasStringValue(section.content.image)) && (
                         <p className="text-green-400 text-xs">
                           ✓ Image uploaded
                         </p>
                       )}
-                      {(section.content.primaryButtonText ||
-                        section.content.secondaryButtonText) && (
+                      {(hasStringValue(section.content.primaryButtonText) ||
+                        hasStringValue(
+                          section.content.secondaryButtonText
+                        )) && (
                         <p className="text-blue-400 text-xs">
                           ✓ CTA Buttons configured
                         </p>

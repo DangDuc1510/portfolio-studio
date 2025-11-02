@@ -55,8 +55,8 @@ export default function ContactSection() {
                 Get In Touch
               </h2>
               <p className="text-lg text-gray-300">
-                Have a project in mind? We'd love to hear from you. Send us a
-                message and we'll respond as soon as possible.
+                Have a project in mind? We&apos;d love to hear from you. Send us a
+                message and we&apos;ll respond as soon as possible.
               </p>
             </div>
 

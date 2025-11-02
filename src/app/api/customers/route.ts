@@ -1,18 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Customer from '@/lib/models/Customer';
-import mongoose from 'mongoose';
 import { requireApiKey } from '@/lib/api-key-guard';
-
-function isValidObjectId(id: string): boolean {
-  return mongoose.Types.ObjectId.isValid(id);
-}
-
-function validateObjectId(id: string, entityName: string = 'Resource'): void {
-  if (!isValidObjectId(id)) {
-    throw new Error(`Invalid ${entityName} ID: ${id}`);
-  }
-}
 
 // GET /api/customers
 export async function GET(request: NextRequest) {
@@ -28,7 +17,7 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get('sortBy') || 'createdAt';
     const sortOrder = searchParams.get('sortOrder') === 'asc' ? 'asc' : 'desc';
 
-    const query: any = {};
+    const query: Record<string, unknown> = {};
 
     if (search) {
       query.$or = [
@@ -48,7 +37,7 @@ export async function GET(request: NextRequest) {
     if (sortByField === 'createdAt') {
       sortByField = 'submissionDate';
     }
-    const sort: any = { [sortByField]: sortOrder === 'asc' ? 1 : -1 };
+    const sort: Record<string, 1 | -1> = { [sortByField]: sortOrder === 'asc' ? 1 : -1 };
 
     const [data, total] = await Promise.all([
       Customer.find(query).sort(sort).skip(skip).limit(limit).exec(),
@@ -58,7 +47,7 @@ export async function GET(request: NextRequest) {
     // Enrich data with service count and isReturningCustomer flag
     const enrichedData = await Promise.all(
       data.map(async (customer) => {
-        const orConditions: any[] = [{ email: customer.email }];
+        const orConditions: Array<Record<string, unknown>> = [{ email: customer.email }];
         
         if (customer.phone && customer.phone.trim() !== '') {
           orConditions.push({ phone: customer.phone });
@@ -73,7 +62,7 @@ export async function GET(request: NextRequest) {
         
         let previousNote: string | null = null;
         if (isReturningCustomer) {
-          const noteQuery: any = {
+          const noteQuery: Record<string, unknown> = {
             status: 'completed',
             _id: { $ne: customer._id },
           };
@@ -116,12 +105,13 @@ export async function GET(request: NextRequest) {
       limit,
       totalPages: Math.ceil(total / limit),
     });
-  } catch (error: any) {
-    if (error.message?.includes('Unauthorized')) {
-      return NextResponse.json({ error: error.message }, { status: 401 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
+    if (errorMessage.includes('Unauthorized')) {
+      return NextResponse.json({ error: errorMessage }, { status: 401 });
     }
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
@@ -134,9 +124,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const createdCustomer = await new Customer(body).save();
     return NextResponse.json(createdCustomer, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { PlayCircleOutlined } from "@ant-design/icons";
 
 interface HeroSectionProps {
   content?: {

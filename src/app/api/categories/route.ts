@@ -1,28 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Category from '@/lib/models/Category';
-import mongoose from 'mongoose';
 import { requireApiKey } from '@/lib/api-key-guard';
 
-function isValidObjectId(id: string): boolean {
-  return mongoose.Types.ObjectId.isValid(id);
-}
-
-function validateObjectId(id: string, entityName: string = 'Resource'): void {
-  if (!isValidObjectId(id)) {
-    throw new Error(`Invalid ${entityName} ID: ${id}`);
-  }
-}
-
 // GET /api/categories
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     await connectDB();
     const categories = await Category.find().sort({ name: 1 }).exec();
     return NextResponse.json(categories);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
@@ -40,12 +30,13 @@ export async function POST(request: NextRequest) {
     };
     const createdCategory = await new Category(categoryData).save();
     return NextResponse.json(createdCategory, { status: 201 });
-  } catch (error: any) {
-    if (error.message?.includes('Unauthorized')) {
-      return NextResponse.json({ error: error.message }, { status: 401 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
+    if (errorMessage.includes('Unauthorized')) {
+      return NextResponse.json({ error: errorMessage }, { status: 401 });
     }
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

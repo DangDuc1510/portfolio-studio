@@ -22,7 +22,7 @@ export default async function ProductDetailPage({
       ? await getProducts({ category: product.category, limit: 6 })
       : null;
     const relatedProducts = relatedProductsData?.data?.filter(
-      (p: any) => p._id !== product._id
+      (p: { _id: string }) => p._id !== product._id
     ) || [];
 
     return (
@@ -34,7 +34,7 @@ export default async function ProductDetailPage({
         <Footer />
       </div>
     );
-  } catch (error) {
+  } catch {
     notFound();
   }
 }

@@ -7,21 +7,39 @@ import FeaturedProducts from "../components/sections/FeaturedProducts";
 import AlbumsShowcase from "../components/sections/AlbumsShowcase";
 import ContactSection from "../components/sections/ContactSection";
 
-export default async function Home() {
-  // Fetch data in parallel
-  const [productsData, albumsData, homepageSections] = await Promise.all([
-    getProducts({ limit: 6 }),
-    getAlbums(),
-    getHomepageSections(),
-  ]);
+// Disable static generation to allow dynamic data fetching
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-  const products = productsData?.data || [];
-  const albums = albumsData || [];
-  const sections = homepageSections || [];
+export default async function Home() {
+  // Fetch data in parallel with error handling
+  let products = [];
+  let albums = [];
+  let sections = [];
+
+  try {
+    const [productsData, albumsData, homepageSections] = await Promise.all([
+      getProducts({ limit: 6 }).catch(() => ({ data: [] })),
+      getAlbums().catch(() => []),
+      getHomepageSections().catch(() => []),
+    ]);
+
+    products = productsData?.data || [];
+    albums = albumsData || [];
+    sections = homepageSections || [];
+  } catch (error) {
+    // If data fetching fails during build, use empty arrays
+    // This allows the build to succeed and data will load at runtime
+    console.error("Error fetching data:", error);
+  }
 
   // Get section contents
-  const heroSection = sections.find((s: any) => s.sectionName === "hero");
-  const aboutSection = sections.find((s: any) => s.sectionName === "about");
+  const heroSection = sections.find(
+    (s: { sectionName: string }) => s.sectionName === "hero"
+  );
+  const aboutSection = sections.find(
+    (s: { sectionName: string }) => s.sectionName === "about"
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1C1C1C] to-[#343434]">
