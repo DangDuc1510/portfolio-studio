@@ -79,10 +79,6 @@ export default function HomepageSectionForm({
     return typeof value === "string" ? value : "";
   };
 
-  const getStringOrUndefined = (value: unknown): string | undefined => {
-    return typeof value === "string" ? value : undefined;
-  };
-
   const renderFormFields = () => {
     if (!section) return null;
 
@@ -162,7 +158,8 @@ export default function HomepageSectionForm({
                 className="bg-moonlight border-spirit-cyan/20 text-ice-white font-mono text-sm"
               />
               <p className="text-muted-blue text-xs mt-2">
-                Mảng các object dịch vụ với "icon", "title", và "description"
+                Mảng các object dịch vụ với &quot;icon&quot;, &quot;title&quot;,
+                và &quot;description&quot;
               </p>
             </div>
           </div>
@@ -250,7 +247,12 @@ export default function HomepageSectionForm({
   };
 
   if (isLoading) {
-    return <LoadingScreen message="Đang tải thông tin section..." fullScreen={false} />;
+    return (
+      <LoadingScreen
+        message="Đang tải thông tin section..."
+        fullScreen={false}
+      />
+    );
   }
 
   if (!section) {

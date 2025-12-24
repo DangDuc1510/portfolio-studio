@@ -80,15 +80,16 @@ export function getButtonStyles(
   const colors = BUTTON_COLORS[variant];
 
   if (variant === "primary") {
+    const primaryColors = colors as typeof BUTTON_COLORS.primary;
     return {
-      background: colors.gradient,
-      color: colors.text,
+      background: primaryColors.gradient,
+      color: primaryColors.text,
       border: "none",
-      boxShadow: colors.shadow,
+      boxShadow: primaryColors.shadow,
       transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
       "&:hover": {
-        background: colors.gradientHover,
-        color: colors.textHover,
+        background: primaryColors.gradientHover,
+        color: primaryColors.textHover,
         transform: "translateY(-2px)",
         boxShadow: SHADOWS.glowGold,
       },
@@ -99,15 +100,16 @@ export function getButtonStyles(
   }
 
   if (variant === "secondary") {
+    const secondaryColors = colors as typeof BUTTON_COLORS.secondary;
     return {
-      background: colors.gradient,
-      color: colors.text,
+      background: secondaryColors.gradient,
+      color: secondaryColors.text,
       border: "none",
-      boxShadow: colors.shadow,
+      boxShadow: secondaryColors.shadow,
       transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
       "&:hover": {
-        background: colors.bgHover,
-        color: colors.textHover,
+        background: secondaryColors.bgHover,
+        color: secondaryColors.textHover,
         transform: "translateY(-2px)",
         boxShadow: SHADOWS.glowCyanStrong,
       },
@@ -115,40 +117,43 @@ export function getButtonStyles(
   }
 
   if (variant === "ghost") {
+    const ghostColors = colors as typeof BUTTON_COLORS.ghost;
     return {
-      background: colors.bg,
-      color: colors.text,
-      border: `1px solid ${colors.border}`,
+      background: ghostColors.bg,
+      color: ghostColors.text,
+      border: `1px solid ${ghostColors.border}`,
       transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
       "&:hover": {
-        background: colors.bgHover,
-        color: colors.textHover,
-        borderColor: colors.borderHover,
+        background: ghostColors.bgHover,
+        color: ghostColors.textHover,
+        borderColor: ghostColors.borderHover,
       },
     };
   }
 
   if (variant === "text") {
+    const textColors = colors as typeof BUTTON_COLORS.text;
     return {
-      background: colors.bg,
-      color: colors.text,
+      background: textColors.bg,
+      color: textColors.text,
       border: "none",
       transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
       "&:hover": {
-        background: colors.bgHover,
-        color: colors.textHover,
+        background: textColors.bgHover,
+        color: textColors.textHover,
       },
     };
   }
 
   if (variant === "danger") {
+    const dangerColors = colors as typeof BUTTON_COLORS.danger;
     return {
-      background: colors.bg,
-      color: colors.text,
+      background: dangerColors.bg,
+      color: dangerColors.text,
       border: "none",
       transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
       "&:hover": {
-        background: colors.bgHover,
+        background: dangerColors.bgHover,
         transform: "translateY(-2px)",
       },
     };
@@ -166,29 +171,32 @@ export function getCardStyles(
   const colors = CARD_COLORS[variant];
 
   if (variant === "glass") {
+    const glassColors = colors as typeof CARD_COLORS.glass;
     return {
-      background: colors.bgGradient,
-      backdropFilter: colors.backdrop,
-      border: `1px solid ${colors.border}`,
-      boxShadow: colors.shadow,
+      background: glassColors.bgGradient,
+      backdropFilter: glassColors.backdrop,
+      border: `1px solid ${glassColors.border}`,
+      boxShadow: glassColors.shadow,
       transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
     };
   }
 
   if (variant === "elevated") {
+    const elevatedColors = colors as typeof CARD_COLORS.elevated;
     return {
-      background: colors.bg,
-      border: `1px solid ${colors.border}`,
-      boxShadow: colors.shadow,
+      background: elevatedColors.bg,
+      border: `1px solid ${elevatedColors.border}`,
+      boxShadow: elevatedColors.shadow,
       transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
     };
   }
 
   if (variant === "featured") {
+    const featuredColors = colors as typeof CARD_COLORS.featured;
     return {
-      background: colors.bgGradient,
-      border: `2px solid ${colors.border}`,
-      boxShadow: colors.shadow,
+      background: featuredColors.bgGradient,
+      border: `2px solid ${featuredColors.border}`,
+      boxShadow: featuredColors.shadow,
       transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
       "&:hover": {
         transform: "translateY(-4px)",
@@ -197,10 +205,12 @@ export function getCardStyles(
     };
   }
 
+  // Standard variant
+  const standardColors = colors as typeof CARD_COLORS.standard;
   return {
-    background: colors.bgGradient || colors.bg,
-    border: `1px solid ${colors.border}`,
-    boxShadow: colors.shadow,
+    background: standardColors.bgGradient || standardColors.bg,
+    border: `1px solid ${standardColors.border}`,
+    boxShadow: standardColors.shadow,
     transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
   };
 }
@@ -263,10 +273,13 @@ export function getBadgeStyles(
 ) {
   const colors = BADGE_COLORS[variant];
 
+  // Check if shadow exists (some variants don't have it)
+  const shadow = "shadow" in colors ? (colors as { shadow: string }).shadow : "none";
+
   return {
     background: colors.bg,
     color: colors.text,
-    boxShadow: colors.shadow,
+    boxShadow: shadow,
     padding: "4px 12px",
     borderRadius: "12px",
     fontSize: "12px",

@@ -107,7 +107,7 @@ export default function AboutSectionForm({
           className="bg-moonlight border-spirit-cyan/20 text-ice-white font-mono text-sm"
         />
         <p className="text-muted-blue text-xs mt-2">
-          Mảng các object thống kê với "label" và "value"
+          Mảng các object thống kê với &quot;label&quot; và &quot;value&quot;
         </p>
       </div>
     </div>

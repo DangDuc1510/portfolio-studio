@@ -4,6 +4,7 @@
  */
 
 import { TOAST_COLORS, COLORS } from "@/constants/colors";
+import { toast } from "sonner";
 
 /**
  * Sonner toast custom styles
@@ -154,7 +155,6 @@ export const sonnerTheme = {
  */
 export const showToast = {
   success: (message: string, description?: string) => {
-    const { toast } = require("sonner");
     return toast.success(message, {
       description,
       style: sonnerToastStyles.success,
@@ -162,7 +162,6 @@ export const showToast = {
   },
 
   error: (message: string, description?: string) => {
-    const { toast } = require("sonner");
     return toast.error(message, {
       description,
       style: sonnerToastStyles.error,
@@ -170,7 +169,6 @@ export const showToast = {
   },
 
   warning: (message: string, description?: string) => {
-    const { toast } = require("sonner");
     return toast.warning(message, {
       description,
       style: sonnerToastStyles.warning,
@@ -178,7 +176,6 @@ export const showToast = {
   },
 
   info: (message: string, description?: string) => {
-    const { toast } = require("sonner");
     return toast.info(message, {
       description,
       style: sonnerToastStyles.info,
@@ -186,7 +183,6 @@ export const showToast = {
   },
 
   loading: (message: string) => {
-    const { toast } = require("sonner");
     return toast.loading(message, {
       style: {
         background: "rgba(27, 58, 93, 0.9)",
@@ -207,7 +203,6 @@ export const showToast = {
       error: string | ((error: Error) => string);
     }
   ) => {
-    const { toast } = require("sonner");
     return toast.promise(promise, {
       loading: messages.loading,
       success: messages.success,
@@ -216,13 +211,12 @@ export const showToast = {
     });
   },
 
-  custom: (message: string, options?: any) => {
-    const { toast } = require("sonner");
+  custom: (message: string, options?: Record<string, unknown>) => {
     return toast(message, {
       ...options,
       style: {
         ...sonnerToastStyles.default,
-        ...options?.style,
+        ...(options?.style as Record<string, unknown>),
       },
     });
   },

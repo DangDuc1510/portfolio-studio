@@ -127,7 +127,7 @@ export default function FooterSectionForm({
         <div className="space-y-2">
           <div>
             <label className="block text-ice-white text-sm font-medium mb-2">
-              Liên kết "Về chúng tôi" (URL)
+              Liên kết &quot;Về chúng tôi&quot; (URL)
             </label>
             <Input
               value={getStringValue(content.aboutLink)}
