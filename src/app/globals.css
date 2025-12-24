@@ -1,99 +1,613 @@
 @import "tailwindcss";
 
-/* Custom styles for Ant Design Select in dark theme */
-.ant-select-selector {
-  background-color: rgba(44, 44, 44, 0.8) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: #ffffff !important;
-  padding: 12px 16px !important; /* py-3 px-4 */
-  min-height: 48px !important; /* Match input height */
-  display: flex !important;
-  align-items: center !important;
-  border-radius: 12px !important;
+/* ============================================
+   FANTASY PORTFOLIO - CSS VARIABLES & TAILWIND V4 CONFIG
+   Theme: Midnight Fantasy - Huyền ảo, thanh thoát, cao cấp
+   ============================================ */
+
+@theme {
+  /* ============================================
+     🎨 COLOR SYSTEM
+     ============================================ */
+
+  /* Primary Colors - Backgrounds */
+  --color-midnight: #0B132B;
+  --color-navy: #0F1C3F;
+  --color-moonlight: #1B3A5D;
+  --color-midnight-light: #0D1632;
+  --color-navy-dark: #0C1630;
+  --color-moonlight-light: #234A73;
+
+  /* Accent Colors - Fantasy Energy */
+  --color-spirit-cyan: #4FD1FF;
+  --color-azure: #2EC4FF;
+  --color-cyan-dark: #1BA5D9;
+  --color-cyan-light: #7FDDFF;
+  --color-mystic: #6C63FF;
+  --color-mystic-dark: #5449E6;
+  --color-mystic-light: #8B84FF;
+  --color-aqua-mystic: #3FA8D9;
+
+  /* Luxury Colors - CTAs & Premium */
+  --color-golden: #F6C177;
+  --color-soft-gold: #FFD88A;
+  --color-rich-gold: #E5A94F;
+  --color-pale-gold: #FFE5B3;
+  --color-amber: #FFA94D;
+  --color-amber-light: #FFBC73;
+
+  /* Neutral Colors - Text & UI */
+  --color-pure-white: #FFFFFF;
+  --color-ice-white: #EAF6FF;
+  --color-frost-white: #D4E9F7;
+  --color-muted-blue: #8FAFC7;
+  --color-slate-blue: #6B8BA3;
+  --color-deep-slate: #4A6B82;
+  --color-light-gray: #C5D5E0;
+  --color-mid-gray: #7A8FA3;
+
+  /* Semantic Colors - Status */
+  --color-success: #4FFFB0;
+  --color-success-dark: #2EE69A;
+  --color-success-light: #7FFFC7;
+  --color-error: #FF6B9D;
+  --color-error-dark: #E6527D;
+  --color-error-light: #FF8FB3;
+  --color-warning: #FFB84D;
+  --color-warning-dark: #E69A2E;
+  --color-warning-light: #FFCC7F;
+  --color-info: #4FD1FF;
+
+  /* ============================================
+     💫 SHADOW SYSTEM
+     ============================================ */
+
+  /* Standard Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
+  /* Glow Effects - Signature Fantasy Look */
+  --shadow-glow-cyan: 0 0 10px rgba(79, 209, 255, 0.3), 0 0 20px rgba(79, 209, 255, 0.15);
+  --shadow-glow-cyan-strong: 0 0 15px rgba(79, 209, 255, 0.5), 0 0 30px rgba(79, 209, 255, 0.25);
+  --shadow-glow-purple: 0 0 10px rgba(108, 99, 255, 0.3), 0 0 20px rgba(108, 99, 255, 0.15);
+  --shadow-glow-gold: 0 0 10px rgba(246, 193, 119, 0.3), 0 0 20px rgba(246, 193, 119, 0.15);
+  --shadow-glow-white: 0 0 15px rgba(255, 255, 255, 0.2), 0 0 30px rgba(255, 255, 255, 0.1);
+
+  /* Combined Effects */
+  --shadow-card-elevated: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 20px rgba(79, 209, 255, 0.15);
+  --shadow-button-glow: 0 4px 12px rgba(246, 193, 119, 0.3), 0 0 20px rgba(246, 193, 119, 0.2);
+
+  /* ============================================
+     🌈 GRADIENT SYSTEM
+     ============================================ */
+
+  /* Background Gradients */
+  --gradient-hero-bg: linear-gradient(135deg, #0B132B 0%, #0F1C3F 40%, #1B3A5D 100%);
+  --gradient-hero-bg-transparent7: linear-gradient(135deg, rgba(11, 19, 43, 0.7) 0%, rgba(15, 28, 63, 0.7) 40%, rgba(27, 58, 93, 0.7) 100%);
+  --gradient-hero-bg-transparent6: linear-gradient(135deg, rgba(11, 19, 43, 0.6) 0%, rgba(15, 28, 63, 0.6) 40%, rgba(27, 58, 93, 0.6) 100%);
+  --gradient-hero-bg-transparent5: linear-gradient(135deg, rgba(11, 19, 43, 0.5) 0%, rgba(15, 28, 63, 0.5) 40%, rgba(27, 58, 93, 0.5) 100%);
+  --gradient-hero-bg-transparent4: linear-gradient(135deg, rgba(11, 19, 43, 0.4) 0%, rgba(15, 28, 63, 0.4) 40%, rgba(27, 58, 93, 0.4) 100%);
+  --gradient-hero-bg-transparent3: linear-gradient(135deg, rgba(11, 19, 43, 0.3) 0%, rgba(15, 28, 63, 0.3) 40%, rgba(27, 58, 93, 0.3) 100%);
+  --gradient-section-bg: linear-gradient(180deg, #0F1C3F 0%, #0B132B 100%);
+  --gradient-card-bg: linear-gradient(135deg, #1B3A5D 0%, #0F1C3F 100%);
+
+  /* Fantasy Glow Gradients */
+  --gradient-fantasy-glow: linear-gradient(120deg, #2EC4FF 0%, #6C63FF 50%, #4FD1FF 100%);
+  --gradient-cyan-glow: linear-gradient(135deg, #4FD1FF 0%, #2EC4FF 100%);
+  --gradient-purple-glow: linear-gradient(135deg, #8B84FF 0%, #6C63FF 100%);
+
+  /* CTA Button Gradients */
+  --gradient-cta-primary: linear-gradient(135deg, #FFD88A 0%, #F6C177 50%, #E5A94F 100%);
+  --gradient-cta-hover: linear-gradient(135deg, #FFE5B3 0%, #FFD88A 50%, #F6C177 100%);
+  --gradient-cta-pressed: linear-gradient(135deg, #F6C177 0%, #E5A94F 50%, #D4984A 100%);
+
+  /* Secondary Button Gradients */
+  --gradient-secondary-cyan: linear-gradient(135deg, #7FDDFF 0%, #4FD1FF 50%, #2EC4FF 100%);
+  --gradient-secondary-purple: linear-gradient(135deg, #8B84FF 0%, #6C63FF 50%, #5449E6 100%);
+
+  /* Glassmorphism */
+  --gradient-glass-light: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+  --gradient-glass-dark: linear-gradient(180deg, rgba(27, 58, 93, 0.4), rgba(15, 28, 63, 0.2));
+  --gradient-glass-card: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+
+  /* Border Gradients */
+  --gradient-border-cyan: linear-gradient(135deg, #4FD1FF 0%, #2EC4FF 100%);
+  --gradient-border-purple: linear-gradient(135deg, #6C63FF 0%, #5449E6 100%);
+  --gradient-border-gold: linear-gradient(135deg, #FFD88A 0%, #F6C177 100%);
+  --gradient-border-fantasy: linear-gradient(135deg, #2EC4FF 0%, #6C63FF 50%, #4FD1FF 100%);
+
+  /* Text Gradients */
+  --gradient-text-gold: linear-gradient(135deg, #FFD88A 0%, #F6C177 100%);
+  --gradient-text-cyan: linear-gradient(135deg, #7FDDFF 0%, #4FD1FF 100%);
+  --gradient-text-fantasy: linear-gradient(120deg, #4FD1FF 0%, #6C63FF 50%, #FFD88A 100%);
+
+
+  /* ============================================
+     🎭 ANIMATION & TRANSITIONS
+     ============================================ */
+
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* ============================================
+     🔤 TYPOGRAPHY (Optional - for consistency)
+     ============================================ */
+
+  --font-heading: 'Sora', 'Cinzel', 'Playfair Display', serif;
+  --font-body: 'Inter', 'Manrope', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Fira Code', 'JetBrains Mono', monospace;
+
+  /* ============================================
+     🎨 BACKDROP FILTERS
+     ============================================ */
+
+  --backdrop-blur-sm: blur(4px);
+  --backdrop-blur-md: blur(8px);
+  --backdrop-blur-lg: blur(12px);
+  --backdrop-blur-xl: blur(16px);
 }
 
-.ant-select-selection-placeholder {
-  color: #9ca3af !important;
+/* ============================================
+   🌐 GLOBAL STYLES
+   ============================================ */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.ant-select-selection-item {
-  color: #ffffff !important;
+body {
+  background: var(--color-midnight);
+  color: var(--color-ice-white);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  overflow-x: hidden;
 }
 
-.ant-select-dropdown {
-  background-color: #414141 !important;
+/* ============================================
+   🎯 UTILITY CLASSES - Fantasy Effects
+   ============================================ */
+
+/* Gradient backgrounds */
+.bg-hero-gradient {
+  background: var(--gradient-hero-bg);
 }
 
-.ant-select-item {
-  color: #ffffff !important;
+.bg-hero-gradient-transparent7 {
+  background: var(--gradient-hero-bg-transparent7);
 }
 
-.ant-select-item-option-selected {
-  background-color: #4B4B4B !important;
-  color: #ffffff !important;
+.bg-hero-gradient-transparent6 {
+  background: var(--gradient-hero-bg-transparent6);
 }
 
-.ant-select-item-option-active {
-  background-color: #4B4B4B !important;
+.bg-hero-gradient-transparent5 {
+  background: var(--gradient-hero-bg-transparent5);
 }
 
-.ant-select-multiple .ant-select-selection-item {
-  background-color: #4B4B4B !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: #ffffff !important;
+.bg-hero-gradient-transparent4 {
+  background: var(--gradient-hero-bg-transparent4);
 }
 
-/* Custom styles for Ant Design Pagination in dark theme */
-.custom-pagination .ant-pagination-item {
-  background-color: #2C2C2C !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
+.bg-hero-gradient-transparent3 {
+  background: var(--gradient-hero-bg-transparent3);
 }
 
-.custom-pagination .ant-pagination-item a {
-  color: #ffffff !important;
+.bg-section-gradient {
+  background: var(--gradient-section-bg);
 }
 
-.custom-pagination .ant-pagination-item-active {
-  background-color: #4B4B4B !important;
-  border-color: #4B4B4B !important;
+.bg-card-gradient {
+  background: var(--gradient-card-bg);
 }
 
-.custom-pagination .ant-pagination-item-active a {
-  color: #ffffff !important;
+.bg-fantasy-glow {
+  background: var(--gradient-fantasy-glow);
 }
 
-.custom-pagination .ant-pagination-prev,
-.custom-pagination .ant-pagination-next {
-  background-color: #2C2C2C !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
+.bg-secondary-cyan {
+  background: var(--gradient-secondary-cyan);
 }
 
-.custom-pagination .ant-pagination-prev a,
-.custom-pagination .ant-pagination-next a {
-  color: #ffffff !important;
+/* Glassmorphism effects */
+.glass-card {
+  background: var(--gradient-glass-card);
+  backdrop-filter: var(--backdrop-blur-lg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.custom-pagination .ant-pagination-options {
-  color: #ffffff !important;
+.glass-light {
+  background: var(--gradient-glass-light);
+  backdrop-filter: var(--backdrop-blur-lg);
 }
 
-.custom-pagination .ant-pagination-options .ant-select-selector {
-  background-color: #2C2C2C !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: #ffffff !important;
-  height: 32px !important; /* Match pagination button height */
-  min-height: 32px !important;
-  padding: 0 11px !important;
-  display: flex !important;
-  align-items: center !important;
-  border-radius: 8px !important;
+.glass-dark {
+  background: var(--gradient-glass-dark);
+  backdrop-filter: var(--backdrop-blur-md);
 }
 
-.custom-pagination .ant-pagination-options .ant-select-selection-item {
-  line-height: 30px !important;
-  height: 30px !important;
+/* Glow effects */
+.glow-cyan {
+  box-shadow: var(--shadow-glow-cyan);
 }
 
-.custom-pagination .ant-pagination-total-text {
-  color: #ffffff !important;
+.glow-cyan-strong {
+  box-shadow: var(--shadow-glow-cyan-strong);
+}
+
+.glow-purple {
+  box-shadow: var(--shadow-glow-purple);
+}
+
+.glow-gold {
+  box-shadow: var(--shadow-glow-gold);
+}
+
+.glow-white {
+  box-shadow: var(--shadow-glow-white);
+}
+
+/* Text gradients */
+.text-gradient-gold {
+  background: var(--gradient-text-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-cyan {
+  background: var(--gradient-text-cyan);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-fantasy {
+  background: var(--gradient-text-fantasy);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Border gradients */
+.border-gradient-fantasy {
+  position: relative;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.border-gradient-fantasy::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  margin: -2px;
+  border-radius: inherit;
+  background: var(--gradient-border-fantasy);
+}
+
+/* Hover effects */
+.hover-lift {
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-elevated);
+}
+
+.hover-glow-cyan:hover {
+  box-shadow: var(--shadow-glow-cyan-strong);
+  transition: box-shadow var(--transition-base);
+}
+
+/* Animation utilities */
+.animate-fade-in {
+  animation: fadeIn var(--transition-slow) ease-in;
+}
+
+.animate-slide-up {
+  animation: slideUp var(--transition-slow) ease-out;
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glowPulse {
+
+  0%,
+  100% {
+    box-shadow: var(--shadow-glow-cyan);
+  }
+
+  50% {
+    box-shadow: var(--shadow-glow-cyan-strong);
+  }
+}
+
+/* Loading Screen Animations */
+.animate-spin-slow {
+  animation: spin 3s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spinReverse 2.5s linear infinite;
+}
+
+.animate-fade-pulse {
+  animation: fadePulse 2s ease-in-out infinite;
+}
+
+.animate-bounce-dot {
+  animation: bounceDot 1.4s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinReverse {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes fadePulse {
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes bounceDot {
+
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.3;
+  }
+
+  33% {
+    transform: translateY(-20px) translateX(10px);
+    opacity: 0.5;
+  }
+
+  66% {
+    transform: translateY(10px) translateX(-10px);
+    opacity: 0.4;
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.2;
+    transform: scale(1.05);
+  }
+}
+
+/* ============================================
+   🎨 SCROLLBAR STYLING
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-navy);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gradient-fantasy-glow);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gradient-cyan-glow);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-spirit-cyan) var(--color-navy);
+}
+
+/* ============================================
+   🎯 SELECTION STYLING
+   ============================================ */
+
+::selection {
+  background: rgba(79, 209, 255, 0.3);
+  color: var(--color-pure-white);
+}
+
+::-moz-selection {
+  background: rgba(79, 209, 255, 0.3);
+  color: var(--color-pure-white);
+}
+
+/* ============================================
+   🎨 HERO ANIMATED BACKGROUND ELEMENTS
+   ============================================ */
+
+.hero-animated-bg::before,
+.hero-animated-bg::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(3rem);
+  pointer-events: none;
+  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.hero-animated-bg::before {
+  top: 5rem;
+  left: 2.5rem;
+  width: 18rem;
+  height: 18rem;
+  background: rgba(79, 209, 255, 0.1);
+  /* spirit-cyan/10 */
+}
+
+.hero-animated-bg::after {
+  bottom: 5rem;
+  right: 2.5rem;
+  width: 24rem;
+  height: 24rem;
+  background: rgba(108, 99, 255, 0.1);
+  /* mystic/10 */
+  animation-delay: 1s;
+}
+
+.hero-animated-bg-inner::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16rem;
+  height: 16rem;
+  border-radius: 50%;
+  background: rgba(255, 216, 138, 0.05);
+  /* soft-gold/5 */
+  filter: blur(3rem);
+  pointer-events: none;
+  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation-delay: 0.5s;
+}
+
+/* ============================================
+   🎨 TECH MARQUEE ANIMATION
+   ============================================ */
+
+.tech-marquee-container {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  mask-image: linear-gradient(to right,
+      transparent,
+      black 10%,
+      black 90%,
+      transparent);
+  -webkit-mask-image: linear-gradient(to right,
+      transparent,
+      black 10%,
+      black 90%,
+      transparent);
+}
+
+.tech-marquee {
+  display: flex;
+  gap: 0.75rem;
+  animation: marquee 30s linear infinite;
+  width: fit-content;
+}
+
+.tech-marquee-item {
+  white-space: nowrap;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.tech-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ============================================
+   🖼️ REACT-EASY-CROP STYLES
+   ============================================ */
+
+.reactEasyCrop_Container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--color-midnight);
+}
+
+.reactEasyCrop_CropArea {
+  border: 2px solid var(--color-spirit-cyan);
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.reactEasyCrop_CropAreaRound {
+  border-radius: 50%;
 }

@@ -1,4 +1,4 @@
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -6,15 +6,8 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export function extractPublicIdFromUrl(url: string): string | null {
-  try {
-    const regex = /\/v\d+\/(.+)\.(jpg|jpeg|png|gif|webp)/i;
-    const match = url.match(regex);
-    return match ? match[1] : null;
-  } catch {
-    return null;
-  }
-}
+// Re-export utility function from utils for backward compatibility
+export { extractPublicIdFromUrl } from "@/utils/cloudinary";
 
 export default cloudinary;
 

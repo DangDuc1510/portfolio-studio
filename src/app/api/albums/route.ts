@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Album from '@/lib/models/Album';
 import { requireApiKey } from '@/lib/api-key-guard';
+import { ERROR_MESSAGES, HTTP_STATUS } from '@/constants';
 
 // GET /api/albums
 export async function GET() {
@@ -13,7 +14,7 @@ export async function GET() {
     const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
       { error: errorMessage },
-      { status: 500 }
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
     );
   }
 }
@@ -25,15 +26,15 @@ export async function POST(request: NextRequest) {
     await connectDB();
     const body = await request.json();
     const createdAlbum = await new Album(body).save();
-    return NextResponse.json(createdAlbum, { status: 201 });
+    return NextResponse.json(createdAlbum, { status: HTTP_STATUS.CREATED });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    if (errorMessage.includes('Unauthorized')) {
-      return NextResponse.json({ error: errorMessage }, { status: 401 });
+    if (errorMessage.includes(ERROR_MESSAGES.UNAUTHORIZED)) {
+      return NextResponse.json({ error: errorMessage }, { status: HTTP_STATUS.UNAUTHORIZED });
     }
     return NextResponse.json(
       { error: errorMessage },
-      { status: 500 }
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
     );
   }
 }

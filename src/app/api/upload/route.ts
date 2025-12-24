@@ -1,37 +1,56 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireApiKey } from '@/lib/api-key-guard';
-import cloudinary, { extractPublicIdFromUrl } from '@/lib/cloudinary';
+import { NextRequest, NextResponse } from "next/server";
+import { requireApiKey } from "@/lib/api-key-guard";
+import cloudinary, { extractPublicIdFromUrl } from "@/lib/cloudinary";
+import {
+  ERROR_MESSAGES,
+  HTTP_STATUS,
+  MAX_FILE_SIZE,
+  ALLOWED_IMAGE_FORMATS,
+  CLOUDINARY_FOLDER,
+  CLOUDINARY_RESOURCE_TYPE,
+  CLOUDINARY_QUALITY,
+  CLOUDINARY_FETCH_FORMAT,
+  SUCCESS_MESSAGES,
+} from "@/constants";
 
-export const runtime = 'nodejs';
+export const runtime = "nodejs";
 
 // POST /api/upload
 export async function POST(request: NextRequest) {
   try {
     requireApiKey(request);
-    
+
     const formData = await request.formData();
-    const file = formData.get('file') as File;
+    const file = formData.get("file") as File;
 
     if (!file) {
       return NextResponse.json(
-        { error: 'No file uploaded' },
-        { status: 400 }
+        { error: ERROR_MESSAGES.NO_FILE_UPLOADED },
+        { status: HTTP_STATUS.BAD_REQUEST }
       );
     }
 
     // Check file type
-    if (!file.type.match(/\/(jpg|jpeg|png|gif|webp)$/) && !file.type.startsWith('image/')) {
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
+    const isValidFormat =
+      file.type.startsWith("image/") &&
+      (fileExtension
+        ? ALLOWED_IMAGE_FORMATS.includes(
+            fileExtension as (typeof ALLOWED_IMAGE_FORMATS)[number]
+          )
+        : false);
+
+    if (!isValidFormat) {
       return NextResponse.json(
-        { error: 'Only image files are allowed!' },
-        { status: 400 }
+        { error: ERROR_MESSAGES.INVALID_FILE_TYPE },
+        { status: HTTP_STATUS.BAD_REQUEST }
       );
     }
 
-    // Check file size (10MB limit)
-    if (file.size > 10 * 1024 * 1024) {
+    if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { error: 'File size exceeds 10MB limit' },
-        { status: 400 }
+        { error: ERROR_MESSAGES.FILE_SIZE_EXCEEDED },
+        { status: HTTP_STATUS.BAD_REQUEST }
       );
     }
 
@@ -42,23 +61,27 @@ export async function POST(request: NextRequest) {
     // Upload to Cloudinary using base64 or buffer
     try {
       // Verify Cloudinary config
-      if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      if (
+        !process.env.CLOUDINARY_CLOUD_NAME ||
+        !process.env.CLOUDINARY_API_KEY ||
+        !process.env.CLOUDINARY_API_SECRET
+      ) {
         return NextResponse.json(
-          { error: 'Cloudinary configuration is missing. Please check your environment variables.' },
-          { status: 500 }
+          { error: ERROR_MESSAGES.CLOUDINARY_CONFIG_MISSING },
+          { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
         );
       }
 
-      const base64String = buffer.toString('base64');
+      const base64String = buffer.toString("base64");
       const dataUri = `data:${file.type};base64,${base64String}`;
 
       // Simplified upload options to avoid signature issues
       const uploadOptions: Record<string, unknown> = {
-        resource_type: 'image',
-        folder: 'portfolio-studio',
-        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
-        quality: 'auto',
-        fetch_format: 'auto',
+        resource_type: CLOUDINARY_RESOURCE_TYPE,
+        folder: CLOUDINARY_FOLDER,
+        allowed_formats: ALLOWED_IMAGE_FORMATS,
+        quality: CLOUDINARY_QUALITY,
+        fetch_format: CLOUDINARY_FETCH_FORMAT,
       };
 
       // If unsigned upload preset is available, use it to avoid signature issues
@@ -72,7 +95,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        message: 'File uploaded successfully',
+        message: SUCCESS_MESSAGES.FILE_UPLOADED,
         file: {
           publicId: result.public_id,
           url: result.secure_url,
@@ -85,11 +108,13 @@ export async function POST(request: NextRequest) {
         },
       });
     } catch (uploadError: unknown) {
-      const errorMessage = uploadError instanceof Error ? uploadError.message : 'Unknown error';
+      const errorMessage =
+        uploadError instanceof Error ? uploadError.message : "Unknown error";
       const httpCode = (uploadError as { http_code?: number })?.http_code;
-      const errorName = uploadError instanceof Error ? uploadError.name : 'Unknown';
-      
-      console.error('Cloudinary upload error:', {
+      const errorName =
+        uploadError instanceof Error ? uploadError.name : "Unknown";
+
+      console.error("Cloudinary upload error:", {
         message: errorMessage,
         http_code: httpCode,
         name: errorName,
@@ -101,46 +126,50 @@ export async function POST(request: NextRequest) {
       });
 
       // Handle specific Cloudinary error codes
-      if (httpCode === 401) {
-        const isInvalidSignature = errorMessage.includes('Invalid Signature');
+      if (httpCode === HTTP_STATUS.UNAUTHORIZED) {
+        const isInvalidSignature = errorMessage.includes("Invalid Signature");
         return NextResponse.json(
-          { 
-            error: 'Authentication failed. Please check your Cloudinary credentials.',
+          {
+            error: ERROR_MESSAGES.CLOUDINARY_AUTH_FAILED,
             details: errorMessage,
-            hint: isInvalidSignature 
-              ? 'Invalid Signature error usually indicates incorrect CLOUDINARY_API_SECRET. Please verify your API secret in the Cloudinary dashboard.'
-              : 'Please verify CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET in your environment variables.'
+            hint: isInvalidSignature
+              ? ERROR_MESSAGES.CLOUDINARY_INVALID_SIGNATURE
+              : "Please verify CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET in your environment variables.",
           },
-          { status: 401 }
+          { status: HTTP_STATUS.UNAUTHORIZED }
         );
       }
 
-      if (httpCode === 400) {
+      if (httpCode === HTTP_STATUS.BAD_REQUEST) {
         return NextResponse.json(
-          { 
-            error: 'Invalid upload request',
-            details: errorMessage 
+          {
+            error: ERROR_MESSAGES.CLOUDINARY_INVALID_UPLOAD,
+            details: errorMessage,
           },
-          { status: 400 }
+          { status: HTTP_STATUS.BAD_REQUEST }
         );
       }
 
       return NextResponse.json(
-        { 
-          error: 'Upload failed',
-          details: errorMessage || 'Unknown error occurred'
+        {
+          error: ERROR_MESSAGES.CLOUDINARY_UPLOAD_FAILED,
+          details: errorMessage || "Unknown error occurred",
         },
-        { status: httpCode || 500 }
+        { status: httpCode || HTTP_STATUS.INTERNAL_SERVER_ERROR }
       );
     }
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    if (errorMessage.includes('Unauthorized')) {
-      return NextResponse.json({ error: errorMessage }, { status: 401 });
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error";
+    if (errorMessage.includes(ERROR_MESSAGES.UNAUTHORIZED)) {
+      return NextResponse.json(
+        { error: errorMessage },
+        { status: HTTP_STATUS.UNAUTHORIZED }
+      );
     }
     return NextResponse.json(
       { error: errorMessage },
-      { status: 500 }
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
     );
   }
 }
@@ -149,14 +178,14 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     requireApiKey(request);
-    
+
     const body = await request.json();
     const { url, publicId } = body;
 
     if (!url && !publicId) {
       return NextResponse.json(
-        { error: 'URL or publicId is required' },
-        { status: 400 }
+        { error: ERROR_MESSAGES.URL_OR_PUBLIC_ID_REQUIRED },
+        { status: HTTP_STATUS.BAD_REQUEST }
       );
     }
 
@@ -169,30 +198,33 @@ export async function DELETE(request: NextRequest) {
 
     if (!idToDelete) {
       return NextResponse.json(
-        { error: 'Could not extract public ID from URL' },
-        { status: 400 }
+        { error: ERROR_MESSAGES.COULD_NOT_EXTRACT_PUBLIC_ID },
+        { status: HTTP_STATUS.BAD_REQUEST }
       );
     }
 
     const result = await cloudinary.uploader.destroy(idToDelete);
 
     return NextResponse.json({
-      success: result.result === 'ok',
+      success: result.result === "ok",
       message:
-        result.result === 'ok'
-          ? 'File deleted successfully'
-          : 'File not found or could not be deleted',
+        result.result === "ok"
+          ? SUCCESS_MESSAGES.FILE_DELETED
+          : SUCCESS_MESSAGES.FILE_NOT_FOUND,
       result: result.result,
     });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    if (errorMessage.includes('Unauthorized')) {
-      return NextResponse.json({ error: errorMessage }, { status: 401 });
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error";
+    if (errorMessage.includes(ERROR_MESSAGES.UNAUTHORIZED)) {
+      return NextResponse.json(
+        { error: errorMessage },
+        { status: HTTP_STATUS.UNAUTHORIZED }
+      );
     }
     return NextResponse.json(
       { error: errorMessage },
-      { status: 500 }
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
     );
   }
 }
-

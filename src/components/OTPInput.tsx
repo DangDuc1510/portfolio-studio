@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useRef, useEffect } from "react";
 
 interface OTPInputProps {
@@ -105,13 +106,13 @@ export default function OTPInput({
             onPaste={handlePaste}
             className={`w-14 h-14 text-center text-2xl font-bold rounded-xl border-2 transition-all focus:outline-none focus:ring-2 ${
               error
-                ? "border-red-500 bg-red-500/10 text-red-400 focus:ring-red-500"
-                : "border-white/10 bg-[#2C2C2C]/80 text-white focus:border-white/30 focus:ring-white/20"
+                ? "border-error bg-error/10 text-error focus:ring-error"
+                : "border-deep-slate bg-moonlight/80 text-ice-white focus:border-spirit-cyan focus:ring-spirit-cyan/20"
             }`}
           />
         ))}
       </div>
-      {error && <p className="text-red-400 text-sm font-medium">{error}</p>}
+      {error && <p className="text-error text-sm font-medium">{error}</p>}
     </div>
   );
 }
