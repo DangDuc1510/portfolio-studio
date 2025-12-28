@@ -128,53 +128,7 @@ export default function CmsDashboard() {
           icon={<ShoppingOutlined className="text-3xl text-mystic" />}
           title="Sản phẩm"
           value={stats.totals.products}
-          subtitle={`${stats.totals.publishedProducts} đã xuất bản`}
           color="from-mystic to-mystic-dark/50"
-        />
-        <StatCard
-          icon={<HomeOutlined className="text-3xl text-soft-gold" />}
-          title="Nội dung trang chủ"
-          value={stats.totals.homepageSections}
-          color="from-soft-gold to-rich-gold/50"
-        />
-        <StatCard
-          icon={<ToolOutlined className="text-3xl text-success" />}
-          title="Thiết bị"
-          value={stats.totals.equipment}
-          color="from-success to-success-dark/50"
-        />
-      </div>
-
-      {/* Secondary Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <StatCard
-          icon={<CheckCircleOutlined className="text-2xl text-success" />}
-          title="Đã xuất bản"
-          value={stats.totals.publishedProducts}
-          subtitle={`${
-            stats.totals.products > 0
-              ? Math.round(
-                  (stats.totals.publishedProducts / stats.totals.products) * 100
-                )
-              : 0
-          }% tổng số`}
-          color="from-success to-success-dark/40"
-          size="small"
-        />
-        <StatCard
-          icon={<ClockCircleOutlined className="text-2xl text-warning" />}
-          title="Chưa xuất bản"
-          value={stats.totals.unpublishedProducts}
-          subtitle={`${
-            stats.totals.products > 0
-              ? Math.round(
-                  (stats.totals.unpublishedProducts / stats.totals.products) *
-                    100
-                )
-              : 0
-          }% tổng số`}
-          color="from-warning to-warning-dark/40"
-          size="small"
         />
         <StatCard
           icon={

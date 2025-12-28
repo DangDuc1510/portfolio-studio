@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CloseOutlined, FilterOutlined } from "@ant-design/icons";
+import { CloseOutlined, DownOutlined } from "@ant-design/icons";
 import Container from "@/components/Container";
 
 export interface FilterOption {
@@ -49,22 +49,21 @@ export default function FilterBar({
   };
 
   return (
-    <section className="py-8 bg-midnight/50 backdrop-blur-sm border-y border-spirit-cyan/10">
+    <section className="bg-midnight/50 backdrop-blur-sm mb-12">
       <Container>
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4">
           <button
             onClick={toggleFilters}
             className="flex items-center gap-2 text-pure-white hover:text-spirit-cyan transition-colors"
           >
-            <FilterOutlined className="text-xl" />
             <h3 className="text-2xl font-bold">Bộ lọc</h3>
             <span
               className={`text-muted-blue transition-transform duration-300 ease-in-out ml-2 ${
                 isExpanded ? "rotate-180" : "rotate-0"
               }`}
             >
-              ▼
+              <DownOutlined />
             </span>
           </button>
           {hasActiveFilters && (
@@ -86,6 +85,9 @@ export default function FilterBar({
         >
           <div className="space-y-6 pt-2">
             {filterGroups.map((group) => {
+              // Hide "Loại khách hàng" filter
+              if (group.key === "clientType") return null;
+
               const hasOptions = group.options && group.options.length > 0;
 
               if (!hasOptions) return null;

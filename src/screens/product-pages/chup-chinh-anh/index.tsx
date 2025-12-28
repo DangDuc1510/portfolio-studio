@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { usePageSettings, useProductFilters } from "@/hooks/usePageSettings";
 import { getProducts } from "@/lib/api";
 import { Product } from "@/hooks/useProducts";
+import { useAlbums, Album } from "@/hooks/useAlbums";
 import PageHero from "../components/PageHero";
 import FeaturedProductsCarousel from "../components/FeaturedProductsCarousel";
 import FilterBar, { FilterGroup } from "../components/FilterBar";
@@ -23,6 +24,9 @@ export default function ChupChinhAnhPage() {
   // Get filters
   const { data: filters, isLoading: isLoadingFilters } =
     useProductFilters("CHUP_CHINH_ANH");
+
+  // Get albums
+  const { data: albums = [], isLoading: isLoadingAlbums } = useAlbums();
 
   // Get products with filters
   const { data: productsData, isLoading: isLoadingProducts } = useQuery({
@@ -43,6 +47,9 @@ export default function ChupChinhAnhPage() {
       if (activeFilters.equipment?.length) {
         params.equipmentIds = activeFilters.equipment;
       }
+      if (activeFilters.album?.length) {
+        params.albumId = activeFilters.album[0];
+      }
 
       return getProducts(params);
     },
@@ -55,11 +62,23 @@ export default function ChupChinhAnhPage() {
     const groups: FilterGroup[] = [];
 
     // Year filter (common for all product types)
-    if (filters?.years && filters.years.length > 0) {
+    // Generate years from current year to 5 years ago
+    const currentYear = new Date().getFullYear();
+    const generatedYears: string[] = [];
+    for (let i = 0; i <= 10; i++) {
+      generatedYears.push(String(currentYear - i));
+    }
+
+    // Merge with years from API and remove duplicates
+    const allYears = [
+      ...new Set([...generatedYears, ...(filters?.years || [])]),
+    ].sort((a, b) => Number(b) - Number(a)); // Sort descending
+
+    if (allYears.length > 0) {
       groups.push({
         label: "Năm",
         key: "year",
-        options: filters.years.map((year) => ({
+        options: allYears.map((year) => ({
           label: year,
           value: year,
         })),
@@ -88,8 +107,20 @@ export default function ChupChinhAnhPage() {
       });
     }
 
+    // Album filter
+    if (albums && albums.length > 0) {
+      groups.push({
+        label: "Dự án",
+        key: "album",
+        options: albums.map((album: Album) => ({
+          label: album.name,
+          value: album._id,
+        })),
+      });
+    }
+
     return groups;
-  }, [filters]);
+  }, [filters, albums]);
 
   const handleFilterChange = (filterKey: string, value: string) => {
     setActiveFilters((prev) => {
@@ -98,9 +129,8 @@ export default function ChupChinhAnhPage() {
 
       return {
         ...prev,
-        [filterKey]: isActive
-          ? current.filter((v) => v !== value)
-          : [...current, value],
+        // Single select: if clicking the same option, clear it; otherwise replace with new selection
+        [filterKey]: isActive ? [] : [value],
       };
     });
   };
@@ -117,7 +147,7 @@ export default function ChupChinhAnhPage() {
     });
   };
 
-  if (isLoadingSettings || isLoadingFilters) {
+  if (isLoadingSettings || isLoadingFilters || isLoadingAlbums) {
     return <LoadingScreen message="Đang tải..." />;
   }
 
@@ -137,15 +167,6 @@ export default function ChupChinhAnhPage() {
         backgroundImage={pageSettings.backgroundImage}
       />
 
-      {pageSettings.featuredProductIds &&
-        pageSettings.featuredProductIds.length > 0 && (
-          <FeaturedProductsCarousel
-            products={
-              (pageSettings.featuredProductIds as unknown as Product[]) || []
-            }
-          />
-        )}
-
       {filterGroups.length > 0 && (
         <FilterBar
           filterGroups={filterGroups}
@@ -163,7 +184,15 @@ export default function ChupChinhAnhPage() {
       ) : (
         <ProductsPhotoGallery products={products} />
       )}
+
+      {pageSettings.featuredProductIds &&
+        pageSettings.featuredProductIds.length > 0 && (
+          <FeaturedProductsCarousel
+            products={
+              (pageSettings.featuredProductIds as unknown as Product[]) || []
+            }
+          />
+        )}
     </div>
   );
 }
-

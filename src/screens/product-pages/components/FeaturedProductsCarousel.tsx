@@ -11,7 +11,7 @@ interface FeaturedProductsCarouselProps {
 }
 
 // Carousel configuration - có thể tùy chỉnh
-const CAROUSEL_HEIGHT = 400; // Height cố định của carousel (px)
+const CAROUSEL_HEIGHT = 200; // Height cố định của carousel (px)
 const AUTO_PLAY_INTERVAL = 5000; // Thời gian auto play (ms)
 const TRANSITION_DURATION = 1000; // Thời gian transition (ms)
 
@@ -531,7 +531,7 @@ export default function FeaturedProductsCarousel({
   return (
     <section className="py-20 bg-section-gradient">
       <Container>
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 text-pure-white">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-pure-white">
           Sản phẩm nổi bật
         </h2>
 
