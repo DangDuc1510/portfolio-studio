@@ -12,6 +12,7 @@ import {
   LogoutOutlined,
   ToolOutlined,
   SettingOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import OTPInput from "@/components/OTPInput";
 
@@ -113,6 +114,12 @@ export default function CmsLayout({ children }: CmsLayoutProps) {
       label: "Nội dung trang chủ",
       icon: HomeOutlined,
       isActive: pathname.includes("/homepage-sections"),
+    },
+    {
+      href: `${basePath}/about-page`,
+      label: "Về chúng tôi",
+      icon: TeamOutlined,
+      isActive: pathname.includes("/about-page"),
     },
     {
       href: `${basePath}/page-settings`,

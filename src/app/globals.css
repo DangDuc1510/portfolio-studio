@@ -616,3 +616,72 @@ body {
 .reactEasyCrop_CropAreaRound {
   border-radius: 50%;
 }
+
+/* ============================================
+   🎨 CMS CUSTOM STYLES
+   ============================================ */
+
+/* Ant Design Modal customization for CMS */
+.cms-modal .ant-modal-content {
+  background: var(--color-moonlight);
+  border: 1px solid rgba(79, 209, 255, 0.2);
+}
+
+.cms-modal .ant-modal-header {
+  background: var(--color-navy);
+  border-bottom: 1px solid rgba(79, 209, 255, 0.2);
+}
+
+.cms-modal .ant-modal-title {
+  color: var(--color-ice-white);
+}
+
+.cms-modal .ant-modal-close {
+  color: var(--color-ice-white);
+}
+
+.cms-modal .ant-modal-close:hover {
+  color: var(--color-spirit-cyan);
+}
+
+.cms-modal .ant-form-item-label > label {
+  color: var(--color-ice-white);
+}
+
+.cms-modal .ant-input,
+.cms-modal .ant-input-textarea textarea,
+.cms-modal .ant-select-selector {
+  background: var(--color-navy);
+  border-color: rgba(79, 209, 255, 0.3);
+  color: var(--color-ice-white);
+}
+
+.cms-modal .ant-input:hover,
+.cms-modal .ant-input-textarea textarea:hover,
+.cms-modal .ant-select-selector:hover {
+  border-color: rgba(79, 209, 255, 0.5);
+}
+
+.cms-modal .ant-input:focus,
+.cms-modal .ant-input-textarea textarea:focus,
+.cms-modal .ant-select-focused .ant-select-selector {
+  border-color: var(--color-spirit-cyan);
+  box-shadow: 0 0 0 2px rgba(79, 209, 255, 0.1);
+}
+
+/* CMS Tabs customization */
+.cms-tabs .ant-tabs-tab {
+  color: var(--color-muted-blue);
+}
+
+.cms-tabs .ant-tabs-tab:hover {
+  color: var(--color-spirit-cyan);
+}
+
+.cms-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--color-spirit-cyan);
+}
+
+.cms-tabs .ant-tabs-ink-bar {
+  background: var(--color-spirit-cyan);
+}
