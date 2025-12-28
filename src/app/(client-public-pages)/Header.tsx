@@ -3,10 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  MenuOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
+import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
+import Container from "@/components/Container";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,17 +12,25 @@ export default function Header() {
   const pathname = usePathname();
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navItems = [
-    { href: "/san-pham", label: "Sản phẩm"},
-    { href: "/ve-chung-toi", label: "Về chúng tôi"},
+    { href: "/san-pham", label: "Sản phẩm" },
+    { href: "/ve-chung-toi", label: "Về chúng tôi" },
   ];
 
   const isActive = (href: string) => {
@@ -37,12 +43,10 @@ export default function Header() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-midnight/20 backdrop-blur-xl"
-          : "bg-transparent"
+        isScrolled ? "bg-midnight/40 backdrop-blur-xl" : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Container>
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link
@@ -121,7 +125,7 @@ export default function Header() {
             </nav>
           </div>
         )}
-      </div>
+      </Container>
     </header>
   );
 }

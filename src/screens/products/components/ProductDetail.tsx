@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Product, ProductType } from "@/hooks/useProducts";
 import { ArrowLeftOutlined, ShareAltOutlined } from "@ant-design/icons";
+import Container from "@/components/Container";
 
 interface ProductDetailProps {
   product: Product;
@@ -94,7 +95,7 @@ export default function ProductDetail({
   const mainImageUrl = mainImage ? getImageUrl(mainImage) : "/image.png";
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <Container className="py-12">
       {/* Back Button */}
       <Link
         href="/san-pham"
@@ -306,7 +307,7 @@ export default function ProductDetail({
           )}
         </div>
       )}
-    </div>
+    </Container>
   );
 }
 

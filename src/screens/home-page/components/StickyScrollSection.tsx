@@ -1,12 +1,13 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, useRef, useEffect, useState } from "react";
 
 interface StickyScrollSectionProps {
   background?: {
     videoUrl?: string;
     imageUrl?: string;
     backgroundColor?: string;
+    posterUrl?: string; // Poster image for video
   };
   overlay?: {
     color?: string;
@@ -22,9 +23,14 @@ export default function StickyScrollSection({
 }: StickyScrollSectionProps) {
   const videoUrl = background?.videoUrl;
   const imageUrl = background?.imageUrl;
+  const posterUrl = background?.posterUrl;
   const backgroundColor = background?.backgroundColor || "bg-midnight";
   const overlayColor = overlay?.color || "midnight";
   const overlayOpacity = overlay?.opacity || 60;
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVideoVisible, setIsVideoVisible] = useState(false);
 
   // Map color names to hex values from color system
   const colorMap: Record<string, string> = {
@@ -47,18 +53,73 @@ export default function StickyScrollSection({
     };
   };
 
+  // Intersection Observer để chỉ play video khi section visible
+  useEffect(() => {
+    if (!videoUrl || !containerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVideoVisible(entry.isIntersecting);
+        });
+      },
+      {
+        threshold: 0.1, // Trigger khi 10% section visible
+        rootMargin: "50px", // Trigger sớm hơn một chút để smooth hơn
+      }
+    );
+
+    observer.observe(containerRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [videoUrl]);
+
+  // Control video playback based on visibility
+  useEffect(() => {
+    if (!videoRef.current || !videoUrl) return;
+
+    const video = videoRef.current;
+
+    const handlePlay = async () => {
+      try {
+        if (isVideoVisible) {
+          await video.play();
+        } else {
+          video.pause();
+        }
+      } catch (error) {
+        // Handle autoplay restrictions
+        console.warn("Video autoplay failed:", error);
+      }
+    };
+
+    handlePlay();
+  }, [isVideoVisible, videoUrl]);
+
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" ref={containerRef}>
       {/* Sticky Background - sẽ dính ở top khi scroll */}
       <div className="sticky top-0 h-screen w-full z-0 overflow-hidden">
         {videoUrl ? (
           <>
             <video
-              autoPlay
+              ref={videoRef}
               loop
               muted
               playsInline
+              preload="none" // Không preload để giảm tải ban đầu
+              poster={posterUrl} // Hiển thị poster image trước khi video load
               className="w-full h-full object-cover"
+              onLoadedData={() => {
+                // Chỉ play khi đã load xong và visible
+                if (isVideoVisible && videoRef.current) {
+                  videoRef.current.play().catch(() => {
+                    // Ignore autoplay errors
+                  });
+                }
+              }}
             >
               <source src={videoUrl} type="video/mp4" />
               Your browser does not support the video tag.

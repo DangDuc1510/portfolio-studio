@@ -509,6 +509,8 @@ body {
   filter: blur(3rem);
   pointer-events: none;
   animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  will-change: opacity, transform;
+  transform: translateZ(0);
 }
 
 .hero-animated-bg::before {
@@ -535,7 +537,7 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) translateZ(0);
   width: 16rem;
   height: 16rem;
   border-radius: 50%;
@@ -545,6 +547,7 @@ body {
   pointer-events: none;
   animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   animation-delay: 0.5s;
+  will-change: opacity, transform;
 }
 
 /* ============================================
@@ -572,6 +575,8 @@ body {
   gap: 0.75rem;
   animation: marquee 30s linear infinite;
   width: fit-content;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .tech-marquee-item {

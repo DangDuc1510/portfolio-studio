@@ -13,6 +13,7 @@ import {
   useHomepageSections,
   useHomepageSection,
 } from "@/hooks/useHomepageSections";
+import Container from "@/components/Container";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -43,7 +44,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-gradient-to-br from-midnight to-navy border-t border-spirit-cyan/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <Container className="py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="lg:col-span-2">
@@ -160,7 +161,7 @@ export default function Footer() {
         <div className="mt-8 pt-8 border-t border-spirit-cyan/20 text-center text-muted-blue text-sm">
           <p>© {currentYear} {brandName}. Đã đăng ký bản quyền.</p>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 }

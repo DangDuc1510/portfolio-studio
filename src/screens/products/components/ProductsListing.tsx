@@ -12,6 +12,7 @@ import {
   UnorderedListOutlined,
 } from "@ant-design/icons";
 import Image from "next/image";
+import Container from "@/components/Container";
 
 interface ProductsListingProps {
   products: Product[];
@@ -97,7 +98,7 @@ export default function ProductsListing({
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <Container className="py-12">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl sm:text-5xl font-bold text-pure-white mb-4">
@@ -325,7 +326,7 @@ export default function ProductsListing({
           )}
         </>
       )}
-    </div>
+    </Container>
   );
 }
 

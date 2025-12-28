@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Container from "@/components/Container";
 
 interface AboutSectionProps {
   content?: {
@@ -37,8 +38,8 @@ export default function AboutSection({ content }: AboutSectionProps) {
   const imageUrl = image ? getImageUrl(image) : "/image.png";
 
   return (
-    <section className="py-12 sm:py-16 lg:py-20 bg-hero-gradient-transparent7 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-12 sm:py-16 lg:py-20 bg-hero-gradient-transparent5 relative">
+      <Container>
         <div className="flex gap-12 items-center">
           {/* Image */}
           <div className="relative rounded-2xl overflow-hidden glass-card border-2 border-spirit-cyan/20 max-h-[400px] min-w-[400px] hover:border-spirit-cyan/40 hover:glow-cyan transition-all duration-300 group">
@@ -104,7 +105,7 @@ export default function AboutSection({ content }: AboutSectionProps) {
             )}
           </div>
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

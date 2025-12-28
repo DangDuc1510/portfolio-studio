@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import Container from "@/components/Container";
 
 interface HeroSectionProps {
   content?: {
@@ -78,7 +79,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
 
   return (
     <section className="bg-hero-gradient-transparent3 min-h-screen flex items-center justify-center relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 hero-animated-bg-inner">
+      <Container className="relative z-10 hero-animated-bg-inner">
         <motion.div
           className="text-center w-full mx-auto"
           variants={containerVariants}
@@ -174,7 +175,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
             </motion.div>
           )}
         </motion.div>
-      </div>
+      </Container>
     </section>
   );
 }
