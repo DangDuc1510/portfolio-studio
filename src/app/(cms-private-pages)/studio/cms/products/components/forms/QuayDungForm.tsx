@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { Select, Input, Button } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useEquipment, Equipment } from "@/hooks/useEquipment";
@@ -16,6 +16,7 @@ interface QuayDungFormProps {
     categoryText: string;
     location: string;
     equipmentIds: string[];
+    aspectRatio?: string;
   };
   onChange: (field: string, value: unknown) => void;
 }
@@ -26,6 +27,16 @@ export default function QuayDungForm({
 }: QuayDungFormProps) {
   const { data: equipmentData } = useEquipment({ limit: 1000 });
   const equipmentList = equipmentData?.data || [];
+
+  // Auto set aspectRatio to "16/9" if has video and aspectRatio is not set
+  React.useEffect(() => {
+    const hasVideo =
+      (formData.platformLinks && formData.platformLinks.length > 0) ||
+      formData.videoUrl;
+    if (hasVideo && !formData.aspectRatio) {
+      onChange("aspectRatio", "16/9");
+    }
+  }, [formData.platformLinks, formData.videoUrl, formData.aspectRatio, onChange]);
 
   const addPlatformLink = () => {
     const newLinks = [
@@ -165,6 +176,30 @@ export default function QuayDungForm({
             value: eq._id,
           }))}
         />
+      </div>
+
+      {/* Aspect Ratio */}
+      <div>
+        <label className="block text-ice-white text-sm font-medium mb-2">
+          Tỉ lệ khung hình
+        </label>
+        <Select
+          value={formData.aspectRatio || "16/9"}
+          onChange={(value) => onChange("aspectRatio", value)}
+          className="w-full"
+          options={[
+            { label: "16:9 (Widescreen - Mặc định cho video)", value: "16/9" },
+            { label: "4:3 (Màn hình)", value: "4/3" },
+            { label: "1:1 (Vuông)", value: "1/1" },
+            { label: "3:2 (Ảnh)", value: "3/2" },
+            { label: "2:3 (Dọc)", value: "2/3" },
+            { label: "9:16 (Story)", value: "9/16" },
+            { label: "21:9 (Ultrawide)", value: "21/9" },
+          ]}
+        />
+        <p className="text-muted-blue text-xs mt-2">
+          Tỉ lệ khung hình của video/ảnh. Mặc định là 16:9 cho video.
+        </p>
       </div>
 
       {/* Note about automatic thumbnail */}

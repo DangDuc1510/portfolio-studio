@@ -15,6 +15,7 @@ export interface IProduct extends Document {
   albumId?: mongoose.Types.ObjectId;
   videoUrl?: string;
   thumbnail?: string;
+  aspectRatio?: string; // Tỉ lệ ảnh dạng "16/9", "4/3", "1/1", v.v.
 
   // QUAY DỰNG fields
   platformLinks?: PlatformLink[];
@@ -60,6 +61,7 @@ const ProductSchema = new Schema<IProduct>(
     albumId: { type: Schema.Types.ObjectId, ref: "Album" },
     videoUrl: String,
     thumbnail: String,
+    aspectRatio: String, // Tỉ lệ ảnh dạng "16/9", "4/3", "1/1", v.v.
 
     // QUAY DỰNG fields
     platformLinks: [PlatformLinkSchema],

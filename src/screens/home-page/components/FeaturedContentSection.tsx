@@ -154,6 +154,27 @@ const CAROUSEL_HEIGHT = 400; // Height cố định của carousel (px)
 const AUTO_PLAY_INTERVAL = 5000; // Thời gian auto play (ms)
 const TRANSITION_DURATION = 1000; // Thời gian transition (ms)
 
+// Helper function to calculate max-width from aspect ratio
+const calculateMaxWidth = (
+  aspectRatio: string | undefined,
+  hasVideo: boolean
+): number | undefined => {
+  // Default to 16/9 for video if not specified
+  const ratio = aspectRatio || (hasVideo ? "16/9" : undefined);
+  if (!ratio) return undefined;
+
+  // Parse aspect ratio string (e.g., "16/9" -> 16/9)
+  const parts = ratio.split("/");
+  if (parts.length !== 2) return undefined;
+
+  const width = parseFloat(parts[0]);
+  const height = parseFloat(parts[1]);
+  if (isNaN(width) || isNaN(height) || height === 0) return undefined;
+
+  // Calculate width based on CAROUSEL_HEIGHT
+  return (CAROUSEL_HEIGHT * width) / height;
+};
+
 // Product Item Component với hover để hiển thị video
 interface ProductItemProps {
   product: Product;
@@ -198,18 +219,18 @@ const ProductItem = ({
   return (
     <div
       ref={itemRef}
-      className="flex-shrink-0 h-full"
+      className="flex-shrink-0"
       style={{ width: "auto" }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <Link
         href={`/san-pham/${product._id}`}
-        className="block h-full overflow-hidden relative"
+        className="block overflow-hidden relative group"
         style={{ width: "auto" }}
       >
         {hasVideo && videoData ? (
-          <div className="relative w-auto overflow-hidden group aspect-video">
+          <div className="relative w-auto overflow-hidden aspect-video">
             {/* Video Thumbnail - base layer, luôn render */}
             {displayThumbnail && displayThumbnail !== "/image.png" ? (
               <>
@@ -287,6 +308,25 @@ const ProductItem = ({
             <span className="text-muted-blue">Không có hình ảnh</span>
           </div>
         )}
+
+        {/* Product Info */}
+        <div
+          className="mt-3"
+          style={{
+            maxWidth: calculateMaxWidth(product.aspectRatio, hasVideo)
+              ? `${calculateMaxWidth(product.aspectRatio, hasVideo)}px`
+              : undefined,
+          }}
+        >
+          <h4 className="text-pure-white font-semibold text-sm sm:text-base mb-1 line-clamp-1 group-hover:text-spirit-cyan transition-colors">
+            {product.name}
+          </h4>
+          {product.description && (
+            <p className="text-muted-blue text-xs sm:text-sm line-clamp-1 w-full">
+              {product.description}
+            </p>
+          )}
+        </div>
       </Link>
     </div>
   );
@@ -461,7 +501,6 @@ function AutoPlayCarousel({
         ref={carouselRef}
         className={`relative overflow-x-auto overflow-y-hidden ${styleId.current}`}
         style={{
-          height: `${CAROUSEL_HEIGHT}px`,
           scrollbarWidth: "none",
           msOverflowStyle: "none",
         }}
@@ -469,7 +508,7 @@ function AutoPlayCarousel({
         onMouseLeave={handleMouseLeave}
       >
         <div
-          className="flex gap-2 h-full"
+          className="flex gap-4"
           style={{
             width: "max-content",
           }}

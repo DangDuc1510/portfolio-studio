@@ -23,6 +23,7 @@ export interface Product {
   albumId: string;
   videoUrl?: string;
   thumbnail?: string;
+  aspectRatio?: string; // Tỉ lệ ảnh dạng "16/9", "4/3", "1/1", v.v.
 
   // QUAY DỰNG fields
   platformLinks?: PlatformLink[];

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { Select, Input, Button } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import ImageUpload from "@/components/ImageUpload";
@@ -13,6 +13,7 @@ interface ThietKeFormProps {
     designType: string;
     clientType: string;
     toolsUsed: string[];
+    aspectRatio?: string;
   };
   onChange: (field: string, value: unknown) => void;
 }
@@ -54,6 +55,47 @@ export default function ThietKeForm({ formData, onChange }: ThietKeFormProps) {
     onChange("toolsUsed", newTools);
   };
 
+  // Convert aspect ratio number to string format (e.g., 16/9, 4/3)
+  const convertAspectRatioToString = (ratio: number | undefined): string | undefined => {
+    if (!ratio) return undefined;
+    
+    // Common ratios mapping - using computed values
+    const commonRatios: Array<{ value: number; string: string }> = [
+      { value: 1, string: "1/1" },
+      { value: 4 / 3, string: "4/3" },
+      { value: 16 / 9, string: "16/9" },
+      { value: 3 / 2, string: "3/2" },
+      { value: 2 / 3, string: "2/3" },
+      { value: 9 / 16, string: "9/16" },
+      { value: 21 / 9, string: "21/9" },
+    ];
+
+    // Check if it's a common ratio (with small tolerance for floating point)
+    for (const { value, string } of commonRatios) {
+      if (Math.abs(ratio - value) < 0.001) {
+        return string;
+      }
+    }
+
+    // For custom ratios, try to simplify
+    // Find GCD to simplify the ratio
+    const gcd = (a: number, b: number): number => {
+      return b === 0 ? a : gcd(b, a % b);
+    };
+    
+    // Try to find a reasonable representation
+    for (let denom = 1; denom <= 100; denom++) {
+      const num = Math.round(ratio * denom);
+      if (Math.abs(ratio - num / denom) < 0.01) {
+        const divisor = gcd(num, denom);
+        return `${num / divisor}/${denom / divisor}`;
+      }
+    }
+
+    // Fallback: return as decimal ratio
+    return ratio.toFixed(2);
+  };
+
   // Calculate aspect ratio
   const getAspectRatio = (): number | undefined => {
     if (aspectRatioMode === "preset") {
@@ -71,6 +113,34 @@ export default function ThietKeForm({ formData, onChange }: ThietKeFormProps) {
   };
 
   const aspectRatio = getAspectRatio();
+
+  // Update aspectRatio in formData when it changes
+  React.useEffect(() => {
+    const aspectRatioString = convertAspectRatioToString(aspectRatio);
+    if (aspectRatioString && aspectRatioString !== formData.aspectRatio) {
+      onChange("aspectRatio", aspectRatioString);
+    }
+  }, [aspectRatio, formData.aspectRatio, onChange]);
+
+  // Initialize selectedAspectRatio from formData.aspectRatio (only once on mount)
+  React.useEffect(() => {
+    if (formData.aspectRatio && !selectedAspectRatio && aspectRatioMode === "preset") {
+      // Try to match with preset values
+      const ratioMap: Record<string, number> = {
+        "1/1": 1,
+        "4/3": 4/3,
+        "16/9": 16/9,
+        "3/2": 3/2,
+        "2/3": 2/3,
+        "9/16": 9/16,
+        "21/9": 21/9,
+      };
+      if (ratioMap[formData.aspectRatio]) {
+        setSelectedAspectRatio(ratioMap[formData.aspectRatio]);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const showUpload =
     aspectRatioMode === "preset"
       ? selectedAspectRatio !== undefined && selectedAspectRatio !== null

@@ -53,6 +53,7 @@ export default function ProductForm({
     albumId: "",
     videoUrl: "",
     thumbnail: "",
+    aspectRatio: "",
     platformLinks: [],
     categoryText: "",
     location: "",
@@ -112,6 +113,7 @@ export default function ProductForm({
           : "",
         videoUrl: product.videoUrl || "",
         thumbnail: product.thumbnail || "",
+        aspectRatio: product.aspectRatio || "",
         platformLinks: platformLinks,
         categoryText: product.categoryText || "",
         location: product.location || "",
@@ -167,6 +169,7 @@ export default function ProductForm({
         description: form.description || "",
         productType: form.productType,
         albumId: form.albumId || "",
+        aspectRatio: form.aspectRatio || "",
         isPublished: form.isPublished || false,
       };
 
@@ -345,6 +348,7 @@ export default function ProductForm({
             categoryText: form.categoryText || "",
             location: form.location || "",
             equipmentIds: form.equipmentIds || [],
+            aspectRatio: form.aspectRatio || "",
           }}
           onChange={handleFieldChange}
         />
@@ -359,6 +363,7 @@ export default function ProductForm({
             designType: form.designType || "",
             clientType: form.clientType || "",
             toolsUsed: form.toolsUsed || [],
+            aspectRatio: form.aspectRatio || "",
           }}
           onChange={handleFieldChange}
         />
@@ -373,6 +378,7 @@ export default function ProductForm({
             photographyType: form.photographyType || "",
             location: form.location || "",
             equipmentIds: form.equipmentIds || [],
+            aspectRatio: form.aspectRatio || "",
           }}
           onChange={handleFieldChange}
         />
