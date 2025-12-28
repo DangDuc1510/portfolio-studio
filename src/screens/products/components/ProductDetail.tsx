@@ -98,7 +98,13 @@ export default function ProductDetail({
     <Container className="py-12">
       {/* Back Button */}
       <Link
-        href="/san-pham"
+        href={
+          product.productType === "QUAY_DUNG"
+            ? "/quay-dung"
+            : product.productType === "THIET_KE"
+              ? "/thiet-ke"
+              : "/chup-chinh-anh"
+        }
         className="inline-flex items-center gap-2 text-muted-blue hover:text-spirit-cyan mb-8 transition-colors"
       >
         <ArrowLeftOutlined />

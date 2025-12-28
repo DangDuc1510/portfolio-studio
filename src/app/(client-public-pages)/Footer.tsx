@@ -97,18 +97,26 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/"
+                  href="/quay-dung"
                   className="text-muted-blue hover:text-spirit-cyan transition-colors"
                 >
-                  Trang chủ
+                  Quay dựng
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/san-pham"
+                  href="/thiet-ke"
                   className="text-muted-blue hover:text-spirit-cyan transition-colors"
                 >
-                  Sản phẩm
+                  Thiết kế
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/chup-chinh-anh"
+                  className="text-muted-blue hover:text-spirit-cyan transition-colors"
+                >
+                  Chụp - Chỉnh ảnh
                 </Link>
               </li>
               <li>
@@ -159,7 +167,9 @@ export default function Footer() {
         </div>
 
         <div className="mt-8 pt-8 border-t border-spirit-cyan/20 text-center text-muted-blue text-sm">
-          <p>© {currentYear} {brandName}. Đã đăng ký bản quyền.</p>
+          <p>
+            © {currentYear} {brandName}. Đã đăng ký bản quyền.
+          </p>
         </div>
       </Container>
     </footer>

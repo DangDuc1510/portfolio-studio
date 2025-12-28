@@ -38,6 +38,18 @@ export const getProducts = async (filters?: {
   limit?: number;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
+  // QUAY_DUNG filters
+  location?: string | string[];
+  categoryText?: string | string[];
+  equipmentIds?: string | string[];
+  // THIET_KE filters
+  designType?: string | string[];
+  clientType?: string | string[];
+  toolsUsed?: string | string[];
+  // CHUP_CHINH_ANH filters
+  photographyType?: string | string[];
+  // Year filter (based on createdAt)
+  year?: string | string[];
 }) => {
   const params = new URLSearchParams();
   if (filters?.search) params.append("search", filters.search);
@@ -47,6 +59,60 @@ export const getProducts = async (filters?: {
   if (filters?.limit) params.append("limit", filters.limit.toString());
   if (filters?.sortBy) params.append("sortBy", filters.sortBy);
   if (filters?.sortOrder) params.append("sortOrder", filters.sortOrder);
+
+  // QUAY_DUNG filters
+  if (filters?.location) {
+    const location = Array.isArray(filters.location)
+      ? filters.location
+      : [filters.location];
+    params.append("location", JSON.stringify(location));
+  }
+  if (filters?.categoryText) {
+    const categoryText = Array.isArray(filters.categoryText)
+      ? filters.categoryText
+      : [filters.categoryText];
+    params.append("categoryText", JSON.stringify(categoryText));
+  }
+  if (filters?.equipmentIds) {
+    const equipmentIds = Array.isArray(filters.equipmentIds)
+      ? filters.equipmentIds
+      : [filters.equipmentIds];
+    params.append("equipmentIds", JSON.stringify(equipmentIds));
+  }
+
+  // THIET_KE filters
+  if (filters?.designType) {
+    const designType = Array.isArray(filters.designType)
+      ? filters.designType
+      : [filters.designType];
+    params.append("designType", JSON.stringify(designType));
+  }
+  if (filters?.clientType) {
+    const clientType = Array.isArray(filters.clientType)
+      ? filters.clientType
+      : [filters.clientType];
+    params.append("clientType", JSON.stringify(clientType));
+  }
+  if (filters?.toolsUsed) {
+    const toolsUsed = Array.isArray(filters.toolsUsed)
+      ? filters.toolsUsed
+      : [filters.toolsUsed];
+    params.append("toolsUsed", JSON.stringify(toolsUsed));
+  }
+
+  // CHUP_CHINH_ANH filters
+  if (filters?.photographyType) {
+    const photographyType = Array.isArray(filters.photographyType)
+      ? filters.photographyType
+      : [filters.photographyType];
+    params.append("photographyType", JSON.stringify(photographyType));
+  }
+
+  // Year filter
+  if (filters?.year) {
+    const year = Array.isArray(filters.year) ? filters.year : [filters.year];
+    params.append("year", JSON.stringify(year));
+  }
 
   const queryString = params.toString();
   const url = queryString ? `/api/products?${queryString}` : "/api/products";

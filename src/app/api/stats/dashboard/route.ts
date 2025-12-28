@@ -18,15 +18,11 @@ export async function GET(request: NextRequest) {
       totalProducts,
       totalHomepageSections,
       totalEquipment,
-      publishedProducts,
-      unpublishedProducts,
     ] = await Promise.all([
       Album.countDocuments().exec(),
       Product.countDocuments().exec(),
       HomepageSection.countDocuments().exec(),
       Equipment.countDocuments().exec(),
-      Product.countDocuments({ isPublished: true }).exec(),
-      Product.countDocuments({ isPublished: false }).exec(),
     ]);
 
     const thirtyDaysAgo = new Date();
@@ -134,8 +130,6 @@ export async function GET(request: NextRequest) {
         products: totalProducts,
         homepageSections: totalHomepageSections,
         equipment: totalEquipment,
-        publishedProducts,
-        unpublishedProducts,
       },
       productsByType: productsByType.map((item) => ({
         type: item._id || 'Unknown',

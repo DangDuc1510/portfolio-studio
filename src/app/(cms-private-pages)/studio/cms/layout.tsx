@@ -11,6 +11,7 @@ import {
   HomeOutlined,
   LogoutOutlined,
   ToolOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import OTPInput from "@/components/OTPInput";
 
@@ -114,6 +115,12 @@ export default function CmsLayout({ children }: CmsLayoutProps) {
       isActive: pathname.includes("/homepage-sections"),
     },
     {
+      href: `${basePath}/page-settings`,
+      label: "Cài đặt trang",
+      icon: SettingOutlined,
+      isActive: pathname.includes("/page-settings"),
+    },
+    {
       href: "/",
       label: "Về trang chủ",
       icon: LogoutOutlined,
@@ -157,27 +164,30 @@ export default function CmsLayout({ children }: CmsLayoutProps) {
           <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
             {navigationItems.map((item) => {
               const IconComponent = item.icon;
+              const hasSubItems = "subItems" in item && item.subItems;
+
               return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-3 ${
-                    !sidebarCollapsed ? "ml-6 px-8" : "px-[14px]"
-                  } py-4 rounded-xl transition-all ${
-                    item.isActive
-                      ? "bg-moonlight-light text-spirit-cyan border-spirit-cyan/40"
-                      : "text-ice-white hover:bg-moonlight-light hover:text-spirit-cyan border border-transparent hover:border-spirit-cyan/40"
-                  }`}
-                >
-                  <IconComponent
-                    className={`text-lg ${
-                      item.isActive ? "text-spirit-cyan" : "text-ice-white"
+                <div key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={`flex items-center gap-3 ${
+                      !sidebarCollapsed ? "ml-6 px-8" : "px-[14px]"
+                    } py-4 rounded-xl transition-all ${
+                      item.isActive
+                        ? "bg-moonlight-light text-spirit-cyan border-spirit-cyan/40"
+                        : "text-ice-white hover:bg-moonlight-light hover:text-spirit-cyan border border-transparent hover:border-spirit-cyan/40"
                     }`}
-                  />
-                  {!sidebarCollapsed && (
-                    <span className="font-medium">{item.label}</span>
-                  )}
-                </Link>
+                  >
+                    <IconComponent
+                      className={`text-lg ${
+                        item.isActive ? "text-spirit-cyan" : "text-ice-white"
+                      }`}
+                    />
+                    {!sidebarCollapsed && (
+                      <span className="font-medium">{item.label}</span>
+                    )}
+                  </Link>
+                </div>
               );
             })}
           </nav>

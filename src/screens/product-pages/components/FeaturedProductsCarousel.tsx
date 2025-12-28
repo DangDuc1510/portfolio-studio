@@ -1,54 +1,19 @@
 "use client";
 
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useAlbums, Album } from "@/hooks/useAlbums";
-import { useProducts, Product, ProductType } from "@/hooks/useProducts";
 import Container from "@/components/Container";
-import { PRIMARY_COLORS } from "@/constants/colors";
+import { Product, ProductType, PlatformLink } from "@/hooks/useProducts";
 
-type FeaturedProductsByType = Record<
-  ProductType,
-  {
-    albumIds?: string[];
-    productsByAlbum?: Record<string, string[]>;
-  }
->;
-
-interface FeaturedContentSectionProps {
-  content?: {
-    videoUrl?: string;
-    featuredProductsByType?: FeaturedProductsByType;
-  };
+interface FeaturedProductsCarouselProps {
+  products: Product[];
 }
 
-const productTypeLabels: Record<ProductType, string> = {
-  QUAY_DUNG: "QUAY DỰNG",
-  THIET_KE: "THIẾT KẾ",
-  CHUP_CHINH_ANH: "CHỤP - CHỈNH ẢNH",
-};
-
-// Background colors cho mỗi product type
-const productTypeBackgrounds: Record<ProductType, string> = {
-  QUAY_DUNG: "bg-hero-gradient-transparent3", // Màu navy cho Quay Dựng
-  THIET_KE: "bg-hero-gradient-transparent7", // Màu moonlight cho Thiết Kế
-  CHUP_CHINH_ANH: "bg-hero-gradient-transparent3", // Màu midnightLight cho Chụp - Chỉnh Ảnh
-};
-
-const getProductImage = (product: Product): string => {
-  if (product.images && product.images.length > 0 && product.images[0]) {
-    return product.images[0];
-  }
-  if (product.thumbnail) {
-    return product.thumbnail;
-  }
-  return "/image.png";
-};
-
-const isExternalImage = (url: string) => {
-  return url.startsWith("http://") || url.startsWith("https://");
-};
+// Carousel configuration - có thể tùy chỉnh
+const CAROUSEL_HEIGHT = 400; // Height cố định của carousel (px)
+const AUTO_PLAY_INTERVAL = 5000; // Thời gian auto play (ms)
+const TRANSITION_DURATION = 1000; // Thời gian transition (ms)
 
 // Helper function to extract YouTube video ID from URL
 const extractYouTubeVideoId = (url: string): string | null => {
@@ -106,6 +71,20 @@ const convertToEmbedUrl = (url: string, platform?: string): string => {
   return url;
 };
 
+const getProductImage = (product: Product): string => {
+  if (product.images && product.images.length > 0 && product.images[0]) {
+    return product.images[0];
+  }
+  if (product.thumbnail) {
+    return product.thumbnail;
+  }
+  return "/image.png";
+};
+
+const isExternalImage = (url: string) => {
+  return url.startsWith("http://") || url.startsWith("https://");
+};
+
 // Helper component to handle both Next.js Image and regular img
 const ProductImage = ({
   src,
@@ -138,8 +117,7 @@ const ProductImage = ({
     <Image
       src={src}
       alt={alt}
-      width={400}
-      height={CAROUSEL_HEIGHT}
+      fill
       className={className}
       style={style}
       onError={(e) => {
@@ -147,32 +125,6 @@ const ProductImage = ({
       }}
     />
   );
-};
-
-// Carousel configuration - có thể tùy chỉnh
-const CAROUSEL_HEIGHT = 400; // Height cố định của carousel (px)
-const AUTO_PLAY_INTERVAL = 5000; // Thời gian auto play (ms)
-const TRANSITION_DURATION = 1000; // Thời gian transition (ms)
-
-// Helper function to calculate max-width from aspect ratio
-const calculateMaxWidth = (
-  aspectRatio: string | undefined,
-  hasVideo: boolean
-): number | undefined => {
-  // Default to 16/9 for video if not specified
-  const ratio = aspectRatio || (hasVideo ? "16/9" : undefined);
-  if (!ratio) return undefined;
-
-  // Parse aspect ratio string (e.g., "16/9" -> 16/9)
-  const parts = ratio.split("/");
-  if (parts.length !== 2) return undefined;
-
-  const width = parseFloat(parts[0]);
-  const height = parseFloat(parts[1]);
-  if (isNaN(width) || isNaN(height) || height === 0) return undefined;
-
-  // Calculate width based on CAROUSEL_HEIGHT
-  return (CAROUSEL_HEIGHT * width) / height;
 };
 
 // Product Item Component với hover để hiển thị video
@@ -310,14 +262,7 @@ const ProductItem = ({
         )}
 
         {/* Product Info */}
-        <div
-          className="mt-3"
-          style={{
-            maxWidth: calculateMaxWidth(product.aspectRatio, hasVideo)
-              ? `${calculateMaxWidth(product.aspectRatio, hasVideo)}px`
-              : undefined,
-          }}
-        >
+        <div className="mt-3">
           <h4 className="text-pure-white font-semibold text-sm sm:text-base mb-1 line-clamp-1 group-hover:text-spirit-cyan transition-colors">
             {product.name}
           </h4>
@@ -333,17 +278,7 @@ const ProductItem = ({
 };
 
 // Auto Play Carousel Component
-interface AutoPlayCarouselProps {
-  products: Product[];
-  getProductImage: (product: Product) => string;
-  isExternalImage: (url: string) => boolean;
-}
-
-function AutoPlayCarousel({
-  products,
-  getProductImage,
-  isExternalImage,
-}: AutoPlayCarouselProps) {
+function AutoPlayCarousel({ products }: { products: Product[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -586,142 +521,22 @@ function AutoPlayCarousel({
   );
 }
 
-export default function FeaturedContentSection({
-  content,
-}: FeaturedContentSectionProps) {
-  const { data: albumsData } = useAlbums();
-  const albums = albumsData || [];
-
-  const featuredProductsByType: FeaturedProductsByType =
-    content?.featuredProductsByType || {
-      QUAY_DUNG: {},
-      THIET_KE: {},
-      CHUP_CHINH_ANH: {},
-    };
-
-  // Fetch products for each product type
-  const { data: quayDungData } = useProducts({
-    productType: "QUAY_DUNG",
-    limit: 1000,
-  });
-  const { data: thietKeData } = useProducts({
-    productType: "THIET_KE",
-    limit: 1000,
-  });
-  const { data: chupChinhAnhData } = useProducts({
-    productType: "CHUP_CHINH_ANH",
-    limit: 1000,
-  });
-
-  const allProducts = useMemo<Record<ProductType, Product[]>>(() => {
-    return {
-      QUAY_DUNG: quayDungData?.data || [],
-      THIET_KE: thietKeData?.data || [],
-      CHUP_CHINH_ANH: chupChinhAnhData?.data || [],
-    };
-  }, [quayDungData, thietKeData, chupChinhAnhData]);
-
-  // Get products for a specific album and product type
-  const getProductsForAlbum = (
-    albumId: string,
-    productType: ProductType,
-    selectedProductIds?: string[]
-  ): Product[] => {
-    const products = allProducts[productType] || [];
-    const albumProducts = products.filter(
-      (p: Product) => p.albumId === albumId
-    );
-
-    // If specific products are selected, return only those
-    if (selectedProductIds && selectedProductIds.length > 0) {
-      return albumProducts.filter((p: Product) =>
-        selectedProductIds.includes(p._id)
-      );
-    }
-
-    // Otherwise return all products in the album
-    return albumProducts;
-  };
-
-  const productTypes: ProductType[] = [
-    "QUAY_DUNG",
-    "THIET_KE",
-    "CHUP_CHINH_ANH",
-  ];
+export default function FeaturedProductsCarousel({
+  products,
+}: FeaturedProductsCarouselProps) {
+  if (!products || products.length === 0) {
+    return null;
+  }
 
   return (
-    <div className="space-y-0">
-      {productTypes.map((productType) => {
-        const typeData = featuredProductsByType[productType];
-        if (!typeData || !typeData.albumIds || typeData.albumIds.length === 0) {
-          return null;
-        }
+    <section className="py-20 bg-section-gradient">
+      <Container>
+        <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 text-pure-white">
+          Sản phẩm nổi bật
+        </h2>
 
-        return (
-          <section
-            key={productType}
-            className={`py-20 ${productTypeBackgrounds[productType]}`}
-          >
-            <Container>
-              {/* Product Type Header */}
-              <div className="mb-16 text-center">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-pure-white mb-4 drop-shadow-lg">
-                  {productTypeLabels[productType]}
-                </h2>
-                <div className="w-24 h-1 bg-spirit-cyan mx-auto"></div>
-              </div>
-
-              {/* Albums */}
-              <div className="space-y-6">
-                {typeData.albumIds.map((albumId: string) => {
-                  const album = albums.find((a: Album) => a._id === albumId);
-                  if (!album) return null;
-
-                  const selectedProductIds =
-                    typeData.productsByAlbum?.[albumId];
-                  const products = getProductsForAlbum(
-                    albumId,
-                    productType,
-                    selectedProductIds
-                  );
-
-                  if (products.length === 0) return null;
-
-                  return (
-                    <div key={albumId} className="space-y-6">
-                      {/* Album Header */}
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-lg sm:text-xl text-pure-white">
-                          {album.name}
-                        </h3>
-                        <Link
-                          href={
-                            productType === "QUAY_DUNG"
-                              ? "/quay-dung"
-                              : productType === "THIET_KE"
-                                ? "/thiet-ke"
-                                : "/chup-chinh-anh"
-                          }
-                          className="text-spirit-cyan hover:text-secondary-cyan transition-colors text-sm"
-                        >
-                          Xem tất cả →
-                        </Link>
-                      </div>
-
-                      {/* Products Carousel */}
-                      <AutoPlayCarousel
-                        products={products}
-                        getProductImage={getProductImage}
-                        isExternalImage={isExternalImage}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            </Container>
-          </section>
-        );
-      })}
-    </div>
+        <AutoPlayCarousel products={products} />
+      </Container>
+    </section>
   );
 }
