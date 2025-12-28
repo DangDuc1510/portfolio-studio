@@ -111,19 +111,19 @@ export default function CmsLayout({ children }: CmsLayoutProps) {
     },
     {
       href: `${basePath}/homepage-sections`,
-      label: "Nội dung trang chủ",
+      label: "Trang chủ",
       icon: HomeOutlined,
       isActive: pathname.includes("/homepage-sections"),
     },
     {
       href: `${basePath}/about-page`,
-      label: "Về chúng tôi",
+      label: "Trang về chúng tôi",
       icon: TeamOutlined,
       isActive: pathname.includes("/about-page"),
     },
     {
       href: `${basePath}/page-settings`,
-      label: "Cài đặt trang",
+      label: "Trang sản phẩm",
       icon: SettingOutlined,
       isActive: pathname.includes("/page-settings"),
     },
