@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Container from "@/components/Container";
-import { Product, ProductType, PlatformLink } from "@/hooks/useProducts";
+import { Product } from "@/hooks/useProducts";
 
 interface ProductsPhotoGalleryProps {
   products: Product[];

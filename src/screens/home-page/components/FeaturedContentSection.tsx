@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useAlbums, Album } from "@/hooks/useAlbums";
 import { useProducts, Product, ProductType } from "@/hooks/useProducts";
 import Container from "@/components/Container";
-import { PRIMARY_COLORS } from "@/constants/colors";
 
 type FeaturedProductsByType = Record<
   ProductType,
@@ -44,10 +43,6 @@ const getProductImage = (product: Product): string => {
     return product.thumbnail;
   }
   return "/image.png";
-};
-
-const isExternalImage = (url: string) => {
-  return url.startsWith("http://") || url.startsWith("https://");
 };
 
 // Helper function to extract YouTube video ID from URL
@@ -178,7 +173,6 @@ const calculateMaxWidth = (
 // Product Item Component với hover để hiển thị video
 interface ProductItemProps {
   product: Product;
-  index: number;
   imageUrl: string;
   displayThumbnail: string;
   hasVideo: boolean;
@@ -192,7 +186,6 @@ interface ProductItemProps {
 
 const ProductItem = ({
   product,
-  index,
   imageUrl,
   displayThumbnail,
   hasVideo,
@@ -336,13 +329,11 @@ const ProductItem = ({
 interface AutoPlayCarouselProps {
   products: Product[];
   getProductImage: (product: Product) => string;
-  isExternalImage: (url: string) => boolean;
 }
 
 function AutoPlayCarousel({
   products,
   getProductImage,
-  isExternalImage,
 }: AutoPlayCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -355,16 +346,17 @@ function AutoPlayCarousel({
 
   // Hide scrollbar for webkit browsers
   useEffect(() => {
+    const currentStyleId = styleId.current;
     const style = document.createElement("style");
-    style.id = styleId.current;
+    style.id = currentStyleId;
     style.textContent = `
-      .${styleId.current}::-webkit-scrollbar {
+      .${currentStyleId}::-webkit-scrollbar {
         display: none;
       }
     `;
     document.head.appendChild(style);
     return () => {
-      const existingStyle = document.getElementById(styleId.current);
+      const existingStyle = document.getElementById(currentStyleId);
       if (existingStyle) {
         document.head.removeChild(existingStyle);
       }
@@ -569,7 +561,6 @@ function AutoPlayCarousel({
               <ProductItem
                 key={product._id}
                 product={product}
-                index={index}
                 imageUrl={imageUrl}
                 displayThumbnail={displayThumbnail}
                 hasVideo={hasVideo}
@@ -712,7 +703,6 @@ export default function FeaturedContentSection({
                       <AutoPlayCarousel
                         products={products}
                         getProductImage={getProductImage}
-                        isExternalImage={isExternalImage}
                       />
                     </div>
                   );

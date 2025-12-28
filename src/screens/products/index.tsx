@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { getProducts } from "@/lib/api";
 import ProductsListing from "./components/ProductsListing";
 import LoadingScreen from "@/components/LoadingScreen";
 
 export default function ProductsPage() {
-  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   // Get params from URL directly using Next.js useSearchParams (no polling needed)

@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Product, ProductType, PlatformLink } from "@/hooks/useProducts";
+import { Product, PlatformLink } from "@/hooks/useProducts";
 import { ArrowLeftOutlined, ShareAltOutlined } from "@ant-design/icons";
 import Container from "@/components/Container";
 
@@ -243,7 +243,6 @@ const getPlatformInfo = (platform: string) => {
 // Product Item Component với hover để hiển thị video (cho carousel)
 interface CarouselProductItemProps {
   product: Product;
-  index: number;
   imageUrl: string;
   displayThumbnail: string;
   hasVideo: boolean;
@@ -257,7 +256,6 @@ interface CarouselProductItemProps {
 
 const CarouselProductItem = ({
   product,
-  index,
   imageUrl,
   displayThumbnail,
   hasVideo,
@@ -422,16 +420,17 @@ function AutoPlayCarousel({ products }: { products: Product[] }) {
 
   // Hide scrollbar for webkit browsers
   useEffect(() => {
+    const currentStyleId = styleId.current;
     const style = document.createElement("style");
-    style.id = styleId.current;
+    style.id = currentStyleId;
     style.textContent = `
-      .${styleId.current}::-webkit-scrollbar {
+      .${currentStyleId}::-webkit-scrollbar {
         display: none;
       }
     `;
     document.head.appendChild(style);
     return () => {
-      const existingStyle = document.getElementById(styleId.current);
+      const existingStyle = document.getElementById(currentStyleId);
       if (existingStyle) {
         document.head.removeChild(existingStyle);
       }
@@ -636,7 +635,6 @@ function AutoPlayCarousel({ products }: { products: Product[] }) {
               <CarouselProductItem
                 key={product._id}
                 product={product}
-                index={index}
                 imageUrl={imageUrl}
                 displayThumbnail={displayThumbnail}
                 hasVideo={hasVideo}

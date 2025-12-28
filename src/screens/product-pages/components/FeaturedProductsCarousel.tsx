@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Container from "@/components/Container";
-import { Product, ProductType, PlatformLink } from "@/hooks/useProducts";
+import { Product } from "@/hooks/useProducts";
 
 interface FeaturedProductsCarouselProps {
   products: Product[];
@@ -81,10 +81,6 @@ const getProductImage = (product: Product): string => {
   return "/image.png";
 };
 
-const isExternalImage = (url: string) => {
-  return url.startsWith("http://") || url.startsWith("https://");
-};
-
 // Helper component to handle both Next.js Image and regular img
 const ProductImage = ({
   src,
@@ -130,7 +126,6 @@ const ProductImage = ({
 // Product Item Component với hover để hiển thị video
 interface ProductItemProps {
   product: Product;
-  index: number;
   imageUrl: string;
   displayThumbnail: string;
   hasVideo: boolean;
@@ -144,7 +139,6 @@ interface ProductItemProps {
 
 const ProductItem = ({
   product,
-  index,
   imageUrl,
   displayThumbnail,
   hasVideo,
@@ -290,16 +284,17 @@ function AutoPlayCarousel({ products }: { products: Product[] }) {
 
   // Hide scrollbar for webkit browsers
   useEffect(() => {
+    const currentStyleId = styleId.current;
     const style = document.createElement("style");
-    style.id = styleId.current;
+    style.id = currentStyleId;
     style.textContent = `
-      .${styleId.current}::-webkit-scrollbar {
+      .${currentStyleId}::-webkit-scrollbar {
         display: none;
       }
     `;
     document.head.appendChild(style);
     return () => {
-      const existingStyle = document.getElementById(styleId.current);
+      const existingStyle = document.getElementById(currentStyleId);
       if (existingStyle) {
         document.head.removeChild(existingStyle);
       }
@@ -504,7 +499,6 @@ function AutoPlayCarousel({ products }: { products: Product[] }) {
               <ProductItem
                 key={product._id}
                 product={product}
-                index={index}
                 imageUrl={imageUrl}
                 displayThumbnail={displayThumbnail}
                 hasVideo={hasVideo}

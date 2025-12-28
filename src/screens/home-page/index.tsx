@@ -6,8 +6,6 @@ import {
   useHomepageSections,
   HomepageSection,
 } from "@/hooks/useHomepageSections";
-import { useProducts } from "@/hooks/useProducts";
-import { useAlbums } from "@/hooks/useAlbums";
 import HeroSection from "./components/HeroSection";
 import AboutSection from "./components/AboutSection";
 import StickyScrollSection from "./components/StickyScrollSection";
