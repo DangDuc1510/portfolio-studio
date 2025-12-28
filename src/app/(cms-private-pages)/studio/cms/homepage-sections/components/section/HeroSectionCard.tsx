@@ -61,7 +61,7 @@ export default function HeroSectionCard({
           <p className="text-muted-blue text-xs mb-2 font-medium">
             Xem trước nội dung:
           </p>
-          <div className="bg-midnight border border-spirit-cyan/20 rounded-lg p-3 !h-62 overflow-y-auto">
+          <div className="bg-midnight border border-spirit-cyan/20 rounded-lg p-3 !h-32 overflow-y-auto">
             <div className="space-y-1">
               {hasStringValue(content.heading1) && (
                 <p className="text-ice-white text-sm font-medium">

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { ConfigProvider, message } from "antd";
+import { ConfigProvider } from "antd";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ANT_DESIGN_THEME } from "@/constants";
 
@@ -19,13 +19,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       })
   );
 
-  const [messageApi, contextHolder] = message.useMessage();
 
   return (
     <QueryClientProvider client={queryClient}>
       <AntdRegistry>
         <ConfigProvider theme={ANT_DESIGN_THEME}>
-          {contextHolder}
           {children}
         </ConfigProvider>
       </AntdRegistry>
