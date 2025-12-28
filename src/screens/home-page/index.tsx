@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import dynamic from "next/dynamic";
 import {
   useHomepageSections,
   HomepageSection,
@@ -9,9 +10,16 @@ import { useProducts } from "@/hooks/useProducts";
 import { useAlbums } from "@/hooks/useAlbums";
 import HeroSection from "./components/HeroSection";
 import AboutSection from "./components/AboutSection";
-import FeaturedContentSection from "./components/FeaturedContentSection";
 import StickyScrollSection from "./components/StickyScrollSection";
 import LoadingScreen from "@/components/LoadingScreen";
+
+// Dynamic import to avoid hydration mismatch (Math.random() issue)
+const FeaturedContentSection = dynamic(
+  () => import("./components/FeaturedContentSection"),
+  {
+    ssr: false,
+  }
+);
 
 export default function HomePage() {
   const { data: sections = [], isLoading: isLoadingSections } =

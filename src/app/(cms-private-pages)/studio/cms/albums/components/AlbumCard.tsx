@@ -58,8 +58,8 @@ export default function AlbumCard({
   isDeleting,
 }: AlbumCardProps) {
   return (
-    <div className="glass-card rounded-lg overflow-hidden hover-lift hover-glow-cyan border-2 border-spirit-cyan/20 hover:border-spirit-cyan/40 transition-all duration-300 group">
-      {coverImageUrl && (
+    <div className="glass-card rounded-lg overflow-hidden hover-lift hover-glow-cyan border-2 border-spirit-cyan/20 hover:border-spirit-cyan/40 transition-all duration-300 group flex flex-col justify-between">
+      {coverImageUrl ? (
         <div className="bg-gradient-to-br from-spirit-cyan/30 via-mystic/25 to-soft-gold/20 h-48 flex items-center justify-center relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-spirit-cyan/15 via-mystic/15 to-soft-gold/10 group-hover:from-spirit-cyan/25 group-hover:via-mystic/25 group-hover:to-soft-gold/15 transition-all duration-300"></div>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(79,209,255,0.1)_0%,_transparent_70%)]"></div>
@@ -69,7 +69,7 @@ export default function AlbumCard({
             className="w-full h-full object-cover relative z-10 group-hover:scale-105 transition-transform duration-300"
           />
         </div>
-      )}
+      ):<div></div>}
       <div className="p-6">
         <h3 className="text-pure-white text-xl font-bold mb-2 line-clamp-1">
           {album.name}

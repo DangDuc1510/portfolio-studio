@@ -52,7 +52,7 @@ export default function FixedContactButton() {
       {/* Fixed Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-spirit-cyan to-secondary-cyan shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 flex items-center justify-center text-midnight font-bold text-xl"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-blue-500/50 to-white/30 shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 flex items-center justify-center text-midnight font-bold text-xl"
         aria-label="Liên hệ"
       >
         {isOpen ? (

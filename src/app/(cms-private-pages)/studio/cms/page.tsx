@@ -122,26 +122,26 @@ export default function CmsDashboard() {
           icon={<PictureOutlined className="text-3xl text-spirit-cyan" />}
           title="Dự án"
           value={stats.totals.albums}
-          color="from-spirit-cyan/30 to-cyan-dark/50"
+          color="from-spirit-cyan to-cyan-dark/50"
         />
         <StatCard
           icon={<ShoppingOutlined className="text-3xl text-mystic" />}
           title="Sản phẩm"
           value={stats.totals.products}
           subtitle={`${stats.totals.publishedProducts} đã xuất bản`}
-          color="from-mystic/30 to-mystic-dark/50"
+          color="from-mystic to-mystic-dark/50"
         />
         <StatCard
           icon={<HomeOutlined className="text-3xl text-soft-gold" />}
           title="Nội dung trang chủ"
           value={stats.totals.homepageSections}
-          color="from-soft-gold/30 to-rich-gold/50"
+          color="from-soft-gold to-rich-gold/50"
         />
         <StatCard
           icon={<ToolOutlined className="text-3xl text-success" />}
           title="Thiết bị"
           value={stats.totals.equipment}
-          color="from-success/30 to-success-dark/50"
+          color="from-success to-success-dark/50"
         />
       </div>
 
@@ -158,7 +158,7 @@ export default function CmsDashboard() {
                 )
               : 0
           }% tổng số`}
-          color="from-success/20 to-success-dark/40"
+          color="from-success to-success-dark/40"
           size="small"
         />
         <StatCard
@@ -173,7 +173,7 @@ export default function CmsDashboard() {
                 )
               : 0
           }% tổng số`}
-          color="from-warning/20 to-warning-dark/40"
+          color="from-warning to-warning-dark/40"
           size="small"
         />
         <StatCard
@@ -189,8 +189,8 @@ export default function CmsDashboard() {
           subtitle={`${growth.currentWeek} sản phẩm mới`}
           color={
             growth.rate >= 0
-              ? "from-success/20 to-success-dark/40"
-              : "from-error/20 to-error-dark/40"
+              ? "from-success to-success-dark/40"
+              : "from-error to-error-dark/40"
           }
           size="small"
         />
@@ -301,17 +301,19 @@ export default function CmsDashboard() {
         {equipmentByType.length > 0 && (
           <ChartCard title="Thiết bị theo loại" icon={<ToolOutlined />}>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={equipmentByType} layout="vertical">
+              <BarChart data={equipmentByType}>
                 <CartesianGrid
                   strokeDasharray="3 3"
                   stroke="rgba(79, 209, 255, 0.2)"
                 />
-                <XAxis type="number" stroke="rgba(143, 175, 199, 0.8)" />
-                <YAxis
+                <XAxis
                   dataKey="type"
-                  type="category"
                   stroke="rgba(143, 175, 199, 0.8)"
-                  width={100}
+                  tick={{ fill: "rgba(143, 175, 199, 0.8)", fontSize: 12 }}
+                />
+                <YAxis
+                  stroke="rgba(143, 175, 199, 0.8)"
+                  tick={{ fill: "rgba(143, 175, 199, 0.8)" }}
                 />
                 <Tooltip
                   contentStyle={{
@@ -321,7 +323,7 @@ export default function CmsDashboard() {
                     color: "#EAF6FF",
                   }}
                 />
-                <Bar dataKey="count" radius={[0, 8, 8, 0]}>
+                <Bar dataKey="count" radius={[8, 8, 0, 0]}>
                   {equipmentByType.map(
                     (entry: { type: string }, index: number) => (
                       <Cell
@@ -392,23 +394,21 @@ export default function CmsDashboard() {
           title="Dự án hàng đầu theo số lượng sản phẩm"
           icon={<BarChartOutlined />}
         >
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={albumsData} layout="vertical">
+          <ResponsiveContainer width="100%" height={700}>
+            <BarChart data={albumsData}>
               <CartesianGrid
                 strokeDasharray="3 3"
                 stroke="rgba(79, 209, 255, 0.2)"
               />
               <XAxis
-                type="number"
+                dataKey="name"
                 stroke="rgba(143, 175, 199, 0.8)"
-                tick={{ fill: "rgba(143, 175, 199, 0.8)" }}
+                tick={{ fill: "rgba(143, 175, 199, 0.8)", fontSize: 12 }}
+                height={100}
               />
               <YAxis
-                dataKey="name"
-                type="category"
                 stroke="rgba(143, 175, 199, 0.8)"
                 tick={{ fill: "rgba(143, 175, 199, 0.8)" }}
-                width={150}
               />
               <Tooltip
                 contentStyle={{
@@ -421,8 +421,9 @@ export default function CmsDashboard() {
               <Legend />
               <Bar
                 dataKey="productCount"
+                name="Số lượng sản phẩm"
                 fill="#FFD88A"
-                radius={[0, 8, 8, 0]}
+                radius={[8, 8, 0, 0]}
               />
             </BarChart>
           </ResponsiveContainer>
@@ -449,15 +450,13 @@ function StatCard({
     >
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <p className="text-midnight/80 text-sm font-medium mb-1">{title}</p>
-          <p className={`text-midnight ${valueSizeClass} font-bold`}>
+          <p className="text-midnight text-sm font-medium mb-1">{title}</p>
+          <p className={`text-white ${valueSizeClass} font-bold`}>
             {typeof value === "number" ? value.toLocaleString() : value}
           </p>
-          {subtitle && (
-            <p className="text-midnight/70 text-xs mt-1">{subtitle}</p>
-          )}
+          {subtitle && <p className="text-white text-xs mt-1">{subtitle}</p>}
         </div>
-        <div className="text-midnight/90">{icon}</div>
+        <div className="text-white">{icon}</div>
       </div>
     </div>
   );
@@ -466,7 +465,7 @@ function StatCard({
 function ChartCard({ title, icon, children, className = "" }: ChartCardProps) {
   return (
     <div
-      className={`glass-card rounded-xl p-6 border border-spirit-cyan/20 shadow-lg ${className}`}
+      className={`glass-card rounded-xl p-6 border border-spirit-cyan/20 shadow-lg ${className} flex flex-col justify-between gap-8`}
     >
       <div className="flex items-center gap-2 mb-4">
         <div className="text-spirit-cyan">{icon}</div>

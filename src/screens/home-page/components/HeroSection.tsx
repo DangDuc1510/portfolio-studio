@@ -78,7 +78,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
 
   return (
     <section className="bg-hero-gradient-transparent3 min-h-screen flex items-center justify-center relative overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 relative z-10 hero-animated-bg-inner">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 hero-animated-bg-inner">
         <motion.div
           className="text-center w-full mx-auto"
           variants={containerVariants}
