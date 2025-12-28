@@ -49,7 +49,7 @@ export default function AboutPage() {
             Trang đang được cập nhật
           </h2>
           <p className="text-muted-blue">
-            Nội dung trang "Về chúng tôi" đang được chuẩn bị. Vui lòng quay lại
+            Nội dung trang &quot;Về chúng tôi&quot; đang được chuẩn bị. Vui lòng quay lại
             sau.
           </p>
         </div>
