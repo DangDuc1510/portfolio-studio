@@ -62,7 +62,6 @@ export default function ProductForm({
     clientType: "",
     toolsUsed: [],
     photographyType: "",
-    isPublished: false,
   });
 
   useEffect(() => {
@@ -122,7 +121,6 @@ export default function ProductForm({
         clientType: product.clientType || "",
         toolsUsed: toolsUsed,
         photographyType: product.photographyType || "",
-        isPublished: product.isPublished || false,
       });
       setSelectedProductType(product.productType);
       setCurrentStep("fill-details");
@@ -170,7 +168,6 @@ export default function ProductForm({
         productType: form.productType,
         albumId: form.albumId || "",
         aspectRatio: form.aspectRatio || "",
-        isPublished: form.isPublished || false,
       };
 
       // Add type-specific fields
@@ -235,7 +232,12 @@ export default function ProductForm({
   };
 
   if (isLoading) {
-    return <LoadingScreen message="Đang tải thông tin sản phẩm..." fullScreen={false} />;
+    return (
+      <LoadingScreen
+        message="Đang tải thông tin sản phẩm..."
+        fullScreen={false}
+      />
+    );
   }
 
   // Step 1: Select Product Type

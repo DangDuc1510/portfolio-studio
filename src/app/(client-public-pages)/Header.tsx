@@ -28,10 +28,25 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navItems = [
-    { href: "/san-pham", label: "Sản phẩm" },
-    { href: "/ve-chung-toi", label: "Về chúng tôi" },
+  const productTypes = [
+    {
+      href: "/quay-dung",
+      label: "Quay dựng",
+      type: "QUAY_DUNG",
+    },
+    {
+      href: "/thiet-ke",
+      label: "Thiết kế",
+      type: "THIET_KE",
+    },
+    {
+      href: "/chup-chinh-anh",
+      label: "Chụp - Chỉnh ảnh",
+      type: "CHUP_CHINH_ANH",
+    },
   ];
+
+  const navItems = [{ href: "/ve-chung-toi", label: "Về chúng tôi" }];
 
   const isActive = (href: string) => {
     if (href === "/") {
@@ -58,27 +73,40 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
+            {/* Product Types - Dàn trải */}
+            {productTypes.map((productType) => (
+              <Link
+                key={productType.type}
+                href={productType.href}
+                className={`relative flex items-center gap-2 px-4 py-2 text-ice-white hover:text-spirit-cyan transition-all ${
+                  isActive(productType.href)
+                    ? "text-spirit-cyan font-medium"
+                    : ""
+                }`}
+              >
+                <span>{productType.label}</span>
+                {isActive(productType.href) && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-spirit-cyan"></span>
+                )}
+              </Link>
+            ))}
+
             {navItems.map((item) => {
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-                    isActive(item.href)
-                      ? "bg-secondary-cyan text-midnight font-medium"
-                      : "text-ice-white hover:bg-moonlight-light"
+                  className={`relative flex items-center gap-2 px-4 py-2 text-ice-white hover:text-spirit-cyan transition-all ${
+                    isActive(item.href) ? "text-spirit-cyan font-medium" : ""
                   }`}
                 >
                   <span>{item.label}</span>
+                  {isActive(item.href) && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-spirit-cyan"></span>
+                  )}
                 </Link>
               );
             })}
-            <Link
-              href="/dat-lich"
-              className="ml-2 px-6 py-2 bg-golden hover:opacity-90 text-midnight font-semibold rounded-lg hover:shadow-lg hover:scale-105 transition-all"
-            >
-              Đăt lịch ngay
-            </Link>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -99,29 +127,42 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden pb-6 border-t border-spirit-cyan/20 mt-4 pt-4">
             <nav className="flex flex-col gap-2">
+              {/* Product Types - Dàn trải */}
+              {productTypes.map((productType) => (
+                <Link
+                  key={productType.type}
+                  href={productType.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`relative flex items-center gap-3 px-4 py-3 text-ice-white hover:text-spirit-cyan transition-all ${
+                    isActive(productType.href)
+                      ? "text-spirit-cyan font-medium"
+                      : ""
+                  }`}
+                >
+                  <span>{productType.label}</span>
+                  {isActive(productType.href) && (
+                    <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-spirit-cyan"></span>
+                  )}
+                </Link>
+              ))}
+
               {navItems.map((item) => {
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                      isActive(item.href)
-                        ? "bg-secondary-cyan text-midnight font-medium"
-                        : "text-ice-white hover:bg-moonlight-light"
+                    className={`relative flex items-center gap-3 px-4 py-3 text-ice-white hover:text-spirit-cyan transition-all ${
+                      isActive(item.href) ? "text-spirit-cyan font-medium" : ""
                     }`}
                   >
                     <span>{item.label}</span>
+                    {isActive(item.href) && (
+                      <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-spirit-cyan"></span>
+                    )}
                   </Link>
                 );
               })}
-              <Link
-                href="/dat-lich"
-                onClick={() => setIsMenuOpen(false)}
-                className="mt-2 px-6 py-3 bg-golden hover:opacity-90 text-midnight font-semibold rounded-lg text-center hover:shadow-lg transition-all"
-              >
-                Đăt lịch ngay
-              </Link>
             </nav>
           </div>
         )}

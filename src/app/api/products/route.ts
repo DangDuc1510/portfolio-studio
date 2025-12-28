@@ -54,6 +54,144 @@ export async function GET(request: NextRequest) {
       query.albumId = new mongoose.Types.ObjectId(albumId);
     }
 
+    // QUAY_DUNG filters
+    const location = searchParams.get("location");
+    if (location) {
+      try {
+        const locations = JSON.parse(location);
+        if (Array.isArray(locations) && locations.length > 0) {
+          query.location = { $in: locations };
+        }
+      } catch (e) {
+        // If not JSON, treat as single location
+        query.location = location;
+      }
+    }
+
+    const categoryText = searchParams.get("categoryText");
+    if (categoryText) {
+      try {
+        const categories = JSON.parse(categoryText);
+        if (Array.isArray(categories) && categories.length > 0) {
+          query.categoryText = { $in: categories };
+        }
+      } catch (e) {
+        // If not JSON, treat as single category
+        query.categoryText = categoryText;
+      }
+    }
+
+    const equipmentIds = searchParams.get("equipmentIds");
+    if (equipmentIds) {
+      try {
+        const ids = JSON.parse(equipmentIds);
+        if (Array.isArray(ids) && ids.length > 0) {
+          const validIds = ids
+            .filter((id) => isValidObjectId(id))
+            .map((id) => new mongoose.Types.ObjectId(id));
+          if (validIds.length > 0) {
+            query.equipmentIds = { $in: validIds };
+          }
+        }
+      } catch (e) {
+        // If not JSON, try as single ID
+        if (isValidObjectId(equipmentIds)) {
+          query.equipmentIds = new mongoose.Types.ObjectId(equipmentIds);
+        }
+      }
+    }
+
+    // THIET_KE filters
+    const designType = searchParams.get("designType");
+    if (designType) {
+      try {
+        const designTypes = JSON.parse(designType);
+        if (Array.isArray(designTypes) && designTypes.length > 0) {
+          query.designType = { $in: designTypes };
+        }
+      } catch (e) {
+        // If not JSON, treat as single designType
+        query.designType = designType;
+      }
+    }
+
+    const clientType = searchParams.get("clientType");
+    if (clientType) {
+      try {
+        const clientTypes = JSON.parse(clientType);
+        if (Array.isArray(clientTypes) && clientTypes.length > 0) {
+          query.clientType = { $in: clientTypes };
+        }
+      } catch (e) {
+        // If not JSON, treat as single clientType
+        query.clientType = clientType;
+      }
+    }
+
+    const toolsUsed = searchParams.get("toolsUsed");
+    if (toolsUsed) {
+      try {
+        const tools = JSON.parse(toolsUsed);
+        if (Array.isArray(tools) && tools.length > 0) {
+          query.toolsUsed = { $in: tools };
+        }
+      } catch (e) {
+        // If not JSON, treat as single tool
+        query.toolsUsed = toolsUsed;
+      }
+    }
+
+    // CHUP_CHINH_ANH filters
+    const photographyType = searchParams.get("photographyType");
+    if (photographyType) {
+      try {
+        const photographyTypes = JSON.parse(photographyType);
+        if (Array.isArray(photographyTypes) && photographyTypes.length > 0) {
+          query.photographyType = { $in: photographyTypes };
+        }
+      } catch (e) {
+        // If not JSON, treat as single photographyType
+        query.photographyType = photographyType;
+      }
+    }
+
+    // Filter by year (based on createdAt)
+    const year = searchParams.get("year");
+    if (year) {
+      try {
+        const years = JSON.parse(year);
+        if (Array.isArray(years) && years.length > 0) {
+          const yearNumbers = years
+            .map((y) => parseInt(y, 10))
+            .filter((y) => !isNaN(y));
+          if (yearNumbers.length > 0) {
+            const yearQueries = yearNumbers.map((y) => {
+              const startDate = new Date(y, 0, 1);
+              const endDate = new Date(y + 1, 0, 1);
+              return {
+                createdAt: {
+                  $gte: startDate,
+                  $lt: endDate,
+                },
+              };
+            });
+            query.$or = yearQueries;
+          }
+        }
+      } catch (e) {
+        // If not JSON, treat as single year
+        const yearNum = parseInt(year, 10);
+        if (!isNaN(yearNum)) {
+          const startDate = new Date(yearNum, 0, 1);
+          const endDate = new Date(yearNum + 1, 0, 1);
+          query.createdAt = {
+            $gte: startDate,
+            $lt: endDate,
+          };
+        }
+      }
+    }
+
     const skip = (page - 1) * limit;
     const sort: Record<string, 1 | -1> = {
       [sortBy]: sortOrder === "asc" ? 1 : -1,

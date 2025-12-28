@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import "@/app/globals.css";
 import React from "react";
 import Providers from "./providers";
-import { Toaster } from "sonner";
-import { sonnerTheme } from "@/utils/sonner-theme";
 
 export const metadata: Metadata = {
   title: "Portfolio Studio",
@@ -19,7 +17,6 @@ export default function RootLayout({
     <html lang="vi">
       <body>
         <Providers>{children}</Providers>
-        <Toaster {...sonnerTheme} />
       </body>
     </html>
   );

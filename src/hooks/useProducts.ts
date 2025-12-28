@@ -41,7 +41,6 @@ export interface Product {
 
   createdAt?: string;
   updatedAt?: string;
-  isPublished?: boolean;
 }
 
 // Query keys

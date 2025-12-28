@@ -33,7 +33,6 @@ export interface IProduct extends Document {
 
   createdAt?: Date;
   updatedAt?: Date;
-  isPublished?: boolean;
 }
 
 const PlatformLinkSchema = new Schema(
@@ -76,8 +75,6 @@ const ProductSchema = new Schema<IProduct>(
 
     // CHỤP - CHỈNH ẢNH fields
     photographyType: String,
-
-    isPublished: { type: Boolean, default: false },
   },
   {
     timestamps: true,
