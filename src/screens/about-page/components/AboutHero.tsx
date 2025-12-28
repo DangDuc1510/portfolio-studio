@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Container from "@/components/Container";
 import { IHeroSection } from "@/lib/models/AboutPage";
@@ -12,7 +12,6 @@ interface AboutHeroProps {
 export default function AboutHero({ content }: AboutHeroProps) {
   const { title, subtitle, backgroundImage, backgroundVideo } = content;
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -42,7 +41,6 @@ export default function AboutHero({ content }: AboutHeroProps) {
                 loop
                 muted
                 playsInline
-                onLoadedData={() => setIsVideoLoaded(true)}
               >
                 <source src={backgroundVideo} type="video/mp4" />
               </video>

@@ -171,7 +171,6 @@ export default function CmsLayout({ children }: CmsLayoutProps) {
           <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
             {navigationItems.map((item) => {
               const IconComponent = item.icon;
-              const hasSubItems = "subItems" in item && item.subItems;
 
               return (
                 <div key={item.href}>

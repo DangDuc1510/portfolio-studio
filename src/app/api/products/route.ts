@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
         if (Array.isArray(locations) && locations.length > 0) {
           query.location = { $in: locations };
         }
-      } catch (e) {
+      } catch {
         // If not JSON, treat as single location
         query.location = location;
       }
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
         if (Array.isArray(categories) && categories.length > 0) {
           query.categoryText = { $in: categories };
         }
-      } catch (e) {
+      } catch {
         // If not JSON, treat as single category
         query.categoryText = categoryText;
       }
@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
             query.equipmentIds = { $in: validIds };
           }
         }
-      } catch (e) {
+      } catch {
         // If not JSON, try as single ID
         if (isValidObjectId(equipmentIds)) {
           query.equipmentIds = new mongoose.Types.ObjectId(equipmentIds);
@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
         if (Array.isArray(designTypes) && designTypes.length > 0) {
           query.designType = { $in: designTypes };
         }
-      } catch (e) {
+      } catch {
         // If not JSON, treat as single designType
         query.designType = designType;
       }
@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
         if (Array.isArray(clientTypes) && clientTypes.length > 0) {
           query.clientType = { $in: clientTypes };
         }
-      } catch (e) {
+      } catch {
         // If not JSON, treat as single clientType
         query.clientType = clientType;
       }
@@ -135,7 +135,7 @@ export async function GET(request: NextRequest) {
         if (Array.isArray(tools) && tools.length > 0) {
           query.toolsUsed = { $in: tools };
         }
-      } catch (e) {
+      } catch {
         // If not JSON, treat as single tool
         query.toolsUsed = toolsUsed;
       }
@@ -149,7 +149,7 @@ export async function GET(request: NextRequest) {
         if (Array.isArray(photographyTypes) && photographyTypes.length > 0) {
           query.photographyType = { $in: photographyTypes };
         }
-      } catch (e) {
+      } catch {
         // If not JSON, treat as single photographyType
         query.photographyType = photographyType;
       }
@@ -178,7 +178,7 @@ export async function GET(request: NextRequest) {
             query.$or = yearQueries;
           }
         }
-      } catch (e) {
+      } catch {
         // If not JSON, treat as single year
         const yearNum = parseInt(year, 10);
         if (!isNaN(yearNum)) {

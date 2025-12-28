@@ -21,6 +21,7 @@ interface ImageUploadProps {
   multipleUrls?: string[];
   aspectRatio?: number;
   cropShape?: "rect" | "round";
+  folder?: string;
 }
 
 interface CropData {
@@ -38,6 +39,7 @@ export default function ImageUpload({
   multipleUrls = [],
   aspectRatio,
   cropShape = "rect",
+  folder: _folder,
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(value || null);
@@ -76,9 +78,6 @@ export default function ImageUpload({
     if (!ctx) {
       throw new Error("No 2d context");
     }
-
-    const maxSize = Math.max(image.width, image.height);
-    const safeArea = 2 * ((maxSize / 2) * Math.sqrt(2));
 
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
@@ -202,9 +201,7 @@ export default function ImageUpload({
       URL.revokeObjectURL(cropData.image);
     }
     // Cleanup file queue URLs
-    fileQueue.forEach((file) => {
-      // URLs will be created when needed, so we don't need to revoke here
-    });
+    // URLs will be created when needed, so we don't need to revoke here
 
     setShowCrop(false);
     setCropData(null);

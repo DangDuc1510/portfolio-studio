@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Equipment from "@/lib/models/Equipment";
 import {
-  ERROR_MESSAGES,
   HTTP_STATUS,
   DEFAULT_PAGE,
   DEFAULT_LIMIT,

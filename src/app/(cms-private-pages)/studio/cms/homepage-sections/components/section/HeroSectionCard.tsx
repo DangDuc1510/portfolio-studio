@@ -4,14 +4,11 @@ import {
   EditOutlined,
   EyeOutlined,
   EyeInvisibleOutlined,
-  DeleteOutlined,
 } from "@ant-design/icons";
 import { HomepageSection } from "@/hooks/useHomepageSections";
 
 interface HeroSectionCardProps {
   section: HomepageSection;
-  onDelete?: (id: string, sectionName: string) => void;
-  isDeleting?: boolean;
 }
 
 const getStringValue = (value: unknown): string => {
@@ -24,8 +21,6 @@ const hasStringValue = (value: unknown): boolean => {
 
 export default function HeroSectionCard({
   section,
-  onDelete,
-  isDeleting = false,
 }: HeroSectionCardProps) {
   const content = section.content || {};
 

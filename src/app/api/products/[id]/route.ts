@@ -76,11 +76,6 @@ export async function PATCH(
     // Copy all fields from body except the ones we handle specially
     const {
       equipmentIds,
-      albumId,
-      productType,
-      _id,
-      createdAt,
-      updatedAt,
       ...fieldsToUpdate
     } = body;
 

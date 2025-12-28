@@ -34,7 +34,7 @@ export default function ValuesSectionForm({
   });
   const [useCustomIcon, setUseCustomIcon] = useState(false);
 
-  const handleChange = (field: keyof IValuesSection, value: any) => {
+  const handleChange = (field: keyof IValuesSection, value: unknown) => {
     onChange({
       ...data,
       [field]: value,

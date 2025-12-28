@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Form, Input, Button, Switch, Select, message } from "antd";
+import { Form, Input, Button, Select, message } from "antd";
 import { SaveOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import {
   usePageSettings,

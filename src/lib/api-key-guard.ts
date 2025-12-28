@@ -14,8 +14,9 @@ export function validateApiKey(request: NextRequest): boolean {
   return apiKey === expectedApiKey;
 }
 
-export function requireApiKey(request: NextRequest): void {
-  // if (!validateApiKey(request)) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function requireApiKey(_request: NextRequest): void {
+  // if (!validateApiKey(_request)) {
   //   throw new Error('Unauthorized: Invalid API Key');
   // }
 }

@@ -32,13 +32,7 @@ export default function HomepageSectionCard({
 
   // Render hero section card separately
   if (sectionName === "hero") {
-    return (
-      <HeroSectionCard
-        section={section}
-        onDelete={onDelete}
-        isDeleting={isDeleting}
-      />
-    );
+    return <HeroSectionCard section={section} />;
   }
 
   // Default card for other sections

@@ -5,10 +5,8 @@ import { getDashboardStats } from "@/lib/api";
 import {
   PictureOutlined,
   ShoppingOutlined,
-  HomeOutlined,
   BarChartOutlined,
   ToolOutlined,
-  CheckCircleOutlined,
   ClockCircleOutlined,
   RiseOutlined,
   FallOutlined,

@@ -25,7 +25,7 @@ export default function PartnersSectionForm({
     order: 0,
   });
 
-  const handleChange = (field: keyof IPartnersSection, value: any) => {
+  const handleChange = (field: keyof IPartnersSection, value: unknown) => {
     onChange({
       ...data,
       [field]: value,

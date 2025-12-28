@@ -25,7 +25,7 @@ export default function TimelineSectionForm({
     order: 0,
   });
 
-  const handleChange = (field: keyof ITimelineSection, value: any) => {
+  const handleChange = (field: keyof ITimelineSection, value: unknown) => {
     onChange({
       ...data,
       [field]: value,

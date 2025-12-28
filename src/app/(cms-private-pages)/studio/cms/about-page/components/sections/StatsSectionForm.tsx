@@ -22,7 +22,7 @@ export default function StatsSectionForm({
     order: 0,
   });
 
-  const handleChange = (field: keyof IStatsSection, value: any) => {
+  const handleChange = (field: keyof IStatsSection, value: unknown) => {
     onChange({
       ...data,
       [field]: value,
@@ -127,7 +127,7 @@ export default function StatsSectionForm({
             Thêm thống kê
           </Button>
           <p className="text-muted-blue text-sm mt-2">
-            Ví dụ: "100+" - "Dự án hoàn thành", "5 năm" - "Kinh nghiệm"
+            Ví dụ: &quot;100+&quot; - &quot;Dự án hoàn thành&quot;, &quot;5 năm&quot; - &quot;Kinh nghiệm&quot;
           </p>
         </Form.Item>
       </Form>

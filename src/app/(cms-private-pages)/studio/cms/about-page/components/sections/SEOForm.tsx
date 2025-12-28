@@ -12,7 +12,7 @@ interface SEOFormProps {
 export default function SEOForm({ data, onChange }: SEOFormProps) {
   const [keywordInput, setKeywordInput] = useState("");
 
-  const handleChange = (field: keyof ISEO, value: any) => {
+  const handleChange = (field: keyof ISEO, value: unknown) => {
     onChange({
       ...data,
       [field]: value,

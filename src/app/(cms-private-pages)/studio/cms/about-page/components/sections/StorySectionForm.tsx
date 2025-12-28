@@ -14,7 +14,7 @@ export default function StorySectionForm({
   data,
   onChange,
 }: StorySectionFormProps) {
-  const handleChange = (field: keyof IStorySection, value: any) => {
+  const handleChange = (field: keyof IStorySection, value: unknown) => {
     onChange({
       ...data,
       [field]: value,

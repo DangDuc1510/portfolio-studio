@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { Product, ProductType, PlatformLink } from "@/hooks/useProducts";
+import { Product } from "@/hooks/useProducts";
 
 // Helper function to extract YouTube video ID from URL
 const extractYouTubeVideoId = (url: string): string | null => {

@@ -32,7 +32,7 @@ export default function TeamSectionForm({
     socialLinks: {},
   });
 
-  const handleChange = (field: keyof ITeamSection, value: any) => {
+  const handleChange = (field: keyof ITeamSection, value: unknown) => {
     onChange({
       ...data,
       [field]: value,
