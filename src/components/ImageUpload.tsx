@@ -127,7 +127,6 @@ export default function ImageUpload({
         croppedAreaPixels,
         cropData.file.name
       );
-
       if (multiple) {
         // Handle multiple files - upload current and continue with next
         const result = await uploadImage(croppedFile);
